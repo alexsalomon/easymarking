@@ -4,7 +4,7 @@ import cmd
 
 class Interface(cmd.Cmd):
 
-	intro = 'EasyMarker v1.0 - Type "help" for help.\n' \
+	intro = 'EasyMarking v1.0 - Type "help" for help.\n' \
 		'Good marking! :)\n'
 	prompt = "easyMarker=# "
 
