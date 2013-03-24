@@ -14,3 +14,23 @@ Git Host: www.bitbucket.org
 Issue Tracker: www.bitbucket.org 
 Project Managemet: www.trello.com
 
+Project Structure
+-----------------
+
+easymarking/
+|-- bin/
+|   |-- #EXECUTABLES
+|
+|-- docs/
+|   |-- #DOCUMENTATION
+|
+|-- interface/
+|   |-- __init__.py
+|   |-- main.py
+|
+|--tests/
+|   |--__init__.py
+|   |--main_test.py
+|
+|-- setup.py
+|-- README
