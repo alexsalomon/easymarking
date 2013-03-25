@@ -1,16 +1,17 @@
 #!/usr/bin/python
 
 import cmd
+from engine.feedback_message import save_message
 
-class Interface(cmd.Cmd):
+class CmdlineInterface(cmd.Cmd):
 
 	intro = 'EasyMarking v1.0 - Type "help" for help.\n' \
 		'Good marking! :)\n'
 	prompt = "easyMarker=# "
 
-	def do_say(self, line):
-		"Repeats whatever the user types"
-		print line 
+	def do_newfbmsg(self, line):
+		"Saves a new custom feedback message"
+		save_message(line)
 
 	def default(self, line):
 		print "*** Unknown command: " + line
@@ -26,4 +27,4 @@ class Interface(cmd.Cmd):
 		return True
 
 if __name__ == '__main__':
-    Interface().cmdloop()
+    CmdlineInterface().cmdloop()
