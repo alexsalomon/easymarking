@@ -1,2 +1,4 @@
-import nosetest
+import nose
 
+def test():
+	pass
