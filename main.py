@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 from clients.cmdline_interface import main 
-from database import database
+from database_models import database
 
 database.init()
 
