@@ -24,12 +24,11 @@ class FeedbackMessage(Base):
 class FBMessageAlias(Base):
     __tablename__ = 'fb_message_aliases'
 
+    alias = Column(String(50), primary_key=True)
     message_id = Column(
         Integer,
-        ForeignKey('feedback_messages.id', ondelete='CASCADE'),
-        primary_key=True
+        ForeignKey('feedback_messages.id', ondelete='CASCADE')
     )
-    alias = Column(String(50), primary_key=True)
 
     def __init__(self, alias):
         self.alias = alias
