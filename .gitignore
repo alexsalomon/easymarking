@@ -1,8 +1,8 @@
+*.db
 *.pyc
 *.swp
 *~
 ._*
-*.db
 
 # Xcode
 *.DS_Store

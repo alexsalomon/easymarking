@@ -9,7 +9,10 @@ def save_message(alias, sentence, marks_allocated):
 	"""Stores the feedback message to the database
 	   Format: alias message marks_allocated
 	"""
-	feedback_message = FeedbackMessage(sentence, marks_allocated)
-	feedback_message.aliases.append(FBMessageAlias(alias))
-	db_session.add(feedback_message)
-	print "Message saved successfully under the alias '" + alias + "'."
+	if not FBMessageAlias.query.get(alias):
+		feedback_message = FeedbackMessage(sentence, marks_allocated)
+		feedback_message.aliases.append(FBMessageAlias(alias))
+		db_session.add(feedback_message)
+		print "Message saved successfully under the alias '" + alias + "'."
+	else:
+		print "*** This alias is already representing another message."
