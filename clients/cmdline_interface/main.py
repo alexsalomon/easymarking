@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import cmd
+import cmd, shlex
 from cmdline_parser import Parser
 from engine.feedback_message import save_message
 
@@ -14,7 +14,7 @@ class CmdlineInterface(cmd.Cmd):
 	def do_newfbmsg(self, line):
 		try:
 			parser = Parser.get_parser('newfbmsg')
-			args = parser.parse_args(line.split())
+			args = parser.parse_args(shlex.split(line))
 			save_message(args.alias, args.message, args.mark_value)
 		except SystemExit:
 			print ""

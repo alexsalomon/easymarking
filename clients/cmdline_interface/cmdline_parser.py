@@ -12,7 +12,7 @@ class Parser():
 		return parser
 
 	@classmethod
-	def __get_newfbmsg_parser(self):		
+	def __get_newfbmsg_parser(cls):		
 		newfbmsg_parser = argparse.ArgumentParser(
 			add_help=False,
 			prog='newfbmsg'
