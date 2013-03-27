@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 import cmd, shlex
-from cmdline_parser import Parser
+from parser import Parser
 from engine.feedback_message import save_message
 
 class CmdlineInterface(cmd.Cmd):
@@ -18,7 +18,6 @@ class CmdlineInterface(cmd.Cmd):
 			print save_message(args.alias, args.message, args.mark_value)
 		except SystemExit:
 			print ""
-			return None	
 
 	def default(self, line):
 		print "*** Unknown command: " + line

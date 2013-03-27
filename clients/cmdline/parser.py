@@ -35,19 +35,14 @@ class Parser():
 		return newfbmsg_parser
 
 def is_integer_or_float(string):
-	is_integer = False
-	is_float = False
-
 	try:
 		float(string)
-		is_float = True
 	except ValueError:
-		is_float = False
+		raise
 
 	try:
 		int(string)
-		is_integer = True
 	except ValueError:
-		is_integer = False
+		raise
 
-	return is_integer or is_float	
+	return string	
