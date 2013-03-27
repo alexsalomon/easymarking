@@ -6,4 +6,4 @@ from database_models import database
 database.init()
 
 if __name__ == '__main__':
-    main.CmdlineInterface().cmdloop()
+	main.CmdlineInterface().cmdloop()

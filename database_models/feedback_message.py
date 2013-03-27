@@ -1,8 +1,8 @@
 from sqlalchemy import Column, ForeignKey, Integer, String, Float
 from sqlalchemy.orm import relationship, backref
-from database import Base
+import database
 
-class FeedbackMessage(Base):
+class FeedbackMessage(database.Base):
     __tablename__ = 'feedback_messages'
 
     id = Column(Integer, primary_key=True)
@@ -21,7 +21,7 @@ class FeedbackMessage(Base):
             self.aliases
         )      
 
-class FBMessageAlias(Base):
+class FBMessageAlias(database.Base):
     __tablename__ = 'fb_message_aliases'
 
     alias = Column(String(50), primary_key=True)
