@@ -15,7 +15,7 @@ class CmdlineInterface(cmd.Cmd):
 		try:
 			parser = Parser.get_parser('newfbmsg')
 			args = parser.parse_args(shlex.split(line))
-			save_message(args.alias, args.message, args.mark_value)
+			print save_message(args.alias, args.message, args.mark_value)
 		except SystemExit:
 			print ""
 			return None	

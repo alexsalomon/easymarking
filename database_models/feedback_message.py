@@ -34,7 +34,7 @@ class FBMessageAlias(database.Base):
         self.alias = alias
 
     def __repr__(self):
-        return '<FBMessageAlias %r %r>' % (
+        return '<FBMessageAlias message_id=%r, alias=%r>' % (
             self.message_id,
             self.alias
         )   
