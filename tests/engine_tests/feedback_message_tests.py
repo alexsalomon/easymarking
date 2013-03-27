@@ -1,4 +1,5 @@
 import nose
+from  sqlalchemy.exc import StatementError
 from database_models import database
 from engine.feedback_message import save_message
 from database_models.feedback_message import FBMessageAlias, FeedbackMessage
@@ -67,12 +68,22 @@ def test_save_message_multiple_times_successeds():
 
 @nose.with_setup(setup=database.empty_database)
 def test_save_message_with_existing_alias_doesnt_complete_transaction():
-	pass
-	#store message with alias "alias"
-	#verify storing the message again returns error message
-	#verify the data is the same as before the error msg
+	success_message = "Message saved successfully under the alias"
+	failure_message = "*** This alias is already representing another message."
 
+	assert success_message in (save_message('alias', 'message', 1))
+	aliases_before_attempt = database.session.query(FBMessageAlias.alias).all()
+	messages_before_attempt = database.session.query(FeedbackMessage).all()
+
+	assert failure_message in (save_message('alias', 'message', 1))
+	aliases_after_attempt = database.session.query(FBMessageAlias.alias).all()
+	messages_after_attempt = database.session.query(FeedbackMessage).all()
+	
+	assert aliases_before_attempt == aliases_after_attempt
+	assert messages_before_attempt == messages_after_attempt
+
+@nose.tools.raises(StatementError)
 @nose.with_setup(setup=database.empty_database)
 def test_save_message_with_non_float_or_integer_marks_allocated_throws_exception():
-	pass
+	save_message('alias', 'message', 'muhahaha')
 
