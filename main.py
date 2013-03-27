@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-from clients.cmdline_interface import main 
+from clients.cmdline import main 
 from database_models import database
 
 database.init()
