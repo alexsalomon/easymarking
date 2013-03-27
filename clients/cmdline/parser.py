@@ -8,6 +8,8 @@ class Parser():
 
 		if command == 'newfbmsg':
 			return cls.__get_newfbmsg_parser()
+		elif command == 'mkfb':
+			return cls.__get_mkfb_parser()			
 		
 		return parser
 
@@ -33,6 +35,23 @@ class Parser():
 		)
 
 		return newfbmsg_parser
+
+	@classmethod
+	def __get_mkfb_parser(cls):		
+		mkfb_parser = argparse.ArgumentParser(
+			add_help=False,
+			prog='mkfb'
+		)
+		mkfb_parser.add_argument(
+			'school_id',
+			help="Student's school unique identifier"
+		)
+		mkfb_parser.add_argument(
+			'alias', 
+			help="Feedback message alias"
+		)
+
+		return mkfb_parser		
 
 def is_integer_or_float(string):
 	try:

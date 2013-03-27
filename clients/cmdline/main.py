@@ -2,7 +2,7 @@
 
 import cmd, shlex
 from parser import Parser
-from engine.feedback_message import save_message
+from engine.feedback_message import save_message, append_feedback
 
 class CmdlineInterface(cmd.Cmd):
 
@@ -18,6 +18,15 @@ class CmdlineInterface(cmd.Cmd):
 			print save_message(args.alias, args.message, args.mark_value)
 		except SystemExit:
 			print ""
+
+	def help_mkfb(self): Parser.get_parser('mkfb').print_help()
+	def do_mkfb(self, line):
+		try:
+			parser = Parser.get_parser('mkfb')
+			args = parser.parse_args(shlex.split(line))
+			print append_feedback(args.school_id, args.alias)
+		except SystemExit:
+			print ""			
 
 	def default(self, line):
 		print "*** Unknown command: " + line

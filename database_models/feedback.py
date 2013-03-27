@@ -6,13 +6,13 @@ class Feedback(database.Base):
 
     student_id = Column(
     	Integer, 
-    	primary_key=True,
-    	ForeignKey("students.id")
+    	ForeignKey("students.id"),
+    	primary_key=True
     )
     message_id = Column(
     	Integer, 
-    	primary_key=True,
-    	ForeignKey("feedback_message.id")
+    	ForeignKey("feedback_messages.id"),
+    	primary_key=True
     )
 
     def __init__(self, student_id, message_id):
