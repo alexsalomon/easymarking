@@ -56,12 +56,14 @@ class Parser():
 def is_integer_or_float(string):
 	try:
 		float(string)
+		is_float = True
 	except ValueError:
-		raise
+		is_float = False
 
 	try:
 		int(string)
 	except ValueError:
-		raise
+		if is_float == False:
+			raise
 
 	return string	
