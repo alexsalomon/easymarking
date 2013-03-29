@@ -2,6 +2,14 @@ from sqlalchemy import Column, ForeignKey, Integer, String, Float
 from sqlalchemy.orm import relationship, backref
 import database
 
+appended_feedback = Table(
+    'appended_feedback', 
+    Base.metadata,    
+    Column('assignment_course', Integer, ForeignKey('assignments.course')),
+    Column('assignment_number', Integer, ForeignKey('assignments.number')),
+    Column('feedback_message_id', Integer, ForeignKey('feedback_messages.id'))
+)
+
 class FeedbackMessage(database.Base):
     __tablename__ = 'feedback_messages'
 
@@ -15,10 +23,9 @@ class FeedbackMessage(database.Base):
         self.grade_value = grade_value
 
     def __repr__(self):
-        return '<FeedbackMessage %r %r %r>' % (
+        return '<FeedbackMessage %r %r>' % (
             self.message,
-            self.grade_value,   
-            self.aliases
+            self.grade_value
         )      
 
 class FBMessageAlias(database.Base):
