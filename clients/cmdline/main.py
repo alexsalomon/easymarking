@@ -26,7 +26,7 @@ class CmdlineInterface(cmd.Cmd):
 			args = parser.parse_args(shlex.split(line))
 			print append_feedback(args.school_id, args.alias)
 		except SystemExit:
-			print ""			
+			print ""	
 
 	def default(self, line):
 		print "*** Unknown command: " + line

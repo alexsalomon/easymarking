@@ -7,7 +7,7 @@ class Student(database.Base):
 
     id = Column(Integer, primary_key=True)
     school_id = Column(String(50), unique=True, nullable=False)
-    assignments = relationship("Assignments")
+    assignments = relationship("Assignment")
 
     def __init__(self, school_id):
         self.school_id = school_id

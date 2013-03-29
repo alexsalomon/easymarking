@@ -1,7 +1,18 @@
 import database
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Table, Column, Integer, String, ForeignKey, ForeignKeyConstraint
 from sqlalchemy.orm import relationship
-from database_models.feedback_message import appended_feedback
+
+appended_feedback = Table(
+    'appended_feedback', 
+    database.Base.metadata,  
+    Column('assignment_course', Integer),
+    Column('assignment_number', Integer),
+    Column('feedback_message_id', Integer, ForeignKey('feedback_messages.id')),
+    ForeignKeyConstraint(
+        ['assignment_course', 'assignment_number'],
+        ['assignments.course', 'assignments.number']
+    )    
+)
 
 class Assignment(database.Base):
     __tablename__ = 'assignments'
@@ -18,7 +29,7 @@ class Assignment(database.Base):
         secondary=appended_feedback
     )
 
-    def __init__(self, number, course):
+    def __init__(self, course, number):
         self.number = number
         self.course = course
 

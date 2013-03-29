@@ -1,21 +1,27 @@
 from database_models import database
-from database_models.student import Student
-from database_models.feedback import Feedback
 from database_models.feedback_message import FeedbackMessage
+from database_models.assignment import Assignment
+from database_models.student import Student
 
-def calculate_marks_deducted_for_student_assignment(school_id):
+def calculate_marks_deducted_for_student_assignment(
+	school_id,
+	assignment_course, 
+	assignment_number
+):
 	db_session = database.session
 
-	student = Student.query.filter_by(school_id=school_id).first()
 	mark_sum = 0
 
+	student = Student.query.filter_by(school_id=school_id).first()
 	if student is not None:
-		student_messages = Feedback.query.filter_by(student_id=school_id).all()
-		print student_messages
-		joined_table = db_session.query(student_messages).join(FeedbackMessage).all()
-
-		for message in joined_table:
-			mark_sum += message.grade_value
+		assignment = Assignment.query.filter_by(
+			course=assignment_course,
+			number=assignment_number,
+			student_id=student.id
+		).first()
+		if assignment is not None:
+			for message in assignment.feedback_messages:
+				mark_sum += message.grade_value
 
 	else:
 		mark_sum = None
