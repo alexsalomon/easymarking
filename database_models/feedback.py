@@ -20,7 +20,7 @@ class Feedback(database.Base):
         self.message_id = message_id
 
     def __repr__(self):
-        return '<Feedback %r>' % (
-            self.school_id,
+        return '<Feedback %r %r>' % (
+            self.student_id,
             self.message_id
         )      
