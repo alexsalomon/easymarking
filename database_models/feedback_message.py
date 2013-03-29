@@ -1,10 +1,10 @@
-from sqlalchemy import Column, ForeignKey, Integer, String, Float
-from sqlalchemy.orm import relationship, backref
+from sqlalchemy import Table, Column, ForeignKey, Integer, String, Float
+from sqlalchemy.orm import relationship
 import database
 
 appended_feedback = Table(
     'appended_feedback', 
-    Base.metadata,    
+    database.Base.metadata,    
     Column('assignment_course', Integer, ForeignKey('assignments.course')),
     Column('assignment_number', Integer, ForeignKey('assignments.number')),
     Column('feedback_message_id', Integer, ForeignKey('feedback_messages.id'))

@@ -1,5 +1,7 @@
-from sqlalchemy import Column, Integer, String
 import database
+from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy.orm import relationship
+from database_models.feedback_message import appended_feedback
 
 class Assignment(database.Base):
     __tablename__ = 'assignments'
