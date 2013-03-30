@@ -24,7 +24,7 @@ class CmdlineInterface(cmd.Cmd):
 		try:
 			parser = Parser.get_parser('mkfb')
 			args = parser.parse_args(shlex.split(line))
-			print append_feedback(args.school_id, args.alias)
+			print append_feedback(args.alias, args.school_id)
 		except SystemExit:
 			print ""	
 

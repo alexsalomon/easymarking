@@ -4,12 +4,12 @@ from database_models.student import Student
 from database_models.feedback_message import FeedbackMessage, FBMessageAlias
 
 @commit_on_success
-def save_message(alias, sentence, marks_allocated):
+def save_message(alias, message, marks_allocated):
 	"Stores the feedback message to the database"
 	db_session = database.session
 
 	if not FBMessageAlias.query.get(alias):
-		feedback_message = FeedbackMessage(sentence, marks_allocated)
+		feedback_message = FeedbackMessage(message, marks_allocated)
 		feedback_message.aliases.append(FBMessageAlias(alias))
 		db_session.add(feedback_message)
 		return "Message saved successfully under the alias '" + alias + "'."
@@ -17,7 +17,7 @@ def save_message(alias, sentence, marks_allocated):
 		return "*** This alias is already representing another message."
 
 @commit_on_success
-def append_feedback(school_id, alias):
+def append_feedback(alias, school_id):
 	"Uses a pre-defined feedback message to provide feedback to a student"
 	db_session = database.session
 

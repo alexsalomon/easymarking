@@ -43,14 +43,14 @@ class Parser():
 			prog='mkfb'
 		)
 		mkfb_parser.add_argument(
-			'school_id',
-			help="Student's school unique identifier"
-		)
-		mkfb_parser.add_argument(
 			'alias', 
 			help="Feedback message alias"
 		)
-
+		mkfb_parser.add_argument(
+			'school_id',
+			help="Student's school unique identifier"
+		)
+		
 		return mkfb_parser		
 
 def is_integer_or_float(string):
