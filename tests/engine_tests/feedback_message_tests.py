@@ -1,13 +1,53 @@
 import nose
 from  sqlalchemy.exc import StatementError
 from database_models import database
-from engine.feedback_message import save_message
+from engine.feedback_message import save_message, append_feedback
+from engine.feedback_message import _create_student_if_doesnt_already_exist
+from engine.feedback_message import _append_assignment_to_existing_student_if_he_doesnt_already_have_it
 from database_models.feedback_message import FBMessageAlias, FeedbackMessage
+from database_models.student import Student
+from database_models.assignment import Assignment
+from database_models.transaction import commit_on_success
 
 database.init('test_database')
 
+@commit_on_success
+def add_initial_data_to_database():
+	db_session = database.session
+
+	student1 = Student("umkonkin")
+	student2 = Student("umtest")
+	db_session.add(student1)
+	db_session.add(student2)
+	db_session.flush()
+
+	assignment1 = Assignment("COMP 4350", 1)
+	assignment2 = Assignment("COMP 4350", 2)
+	student2.assignments.append(assignment1)	
+	student2.assignments.append(assignment2)
+
+	feedback_message1 = FeedbackMessage(
+		"You should have been using constants in you assignment!",
+		0.5
+	)
+	feedback_message2 = FeedbackMessage(
+		"No duplications!!",
+		2
+	)
+	feedback_message3 = FeedbackMessage(
+		"UGH, where is that recursion you should have implemented?",
+		10
+	)	
+	feedback_message1.aliases.append(FBMessageAlias("const"))
+	feedback_message2.aliases.append(FBMessageAlias("dup"))
+	feedback_message3.aliases.append(FBMessageAlias("rec"))
+	db_session.add(feedback_message1)
+	db_session.add(feedback_message2)
+	db_session.add(feedback_message3)
+	db_session.flush()
+
 @nose.with_setup(setup=database.empty_database)
-def test_save_message_multiple_times_successeds():
+def test_save_message_multiple_times_succeeds():
 	success_message = "Message saved successfully under the alias"
 	aliases_to_add = (
 		'alias', 
@@ -44,11 +84,13 @@ def test_save_message_multiple_times_successeds():
 	)
 
 	for index in range(0, len(aliases_to_add)):
-		assert success_message in (save_message(
-			aliases_to_add[index],
-			messages_to_add[index],
-			marks_to_add[index]
-		))
+		assert success_message in (
+			save_message(
+				aliases_to_add[index],
+				messages_to_add[index],
+				marks_to_add[index]
+			)
+		)
 
 	index = 0
 	aliases = database.session.query(FBMessageAlias.alias).all()
@@ -87,3 +129,185 @@ def test_save_message_with_existing_alias_doesnt_complete_transaction():
 def test_save_message_with_non_float_or_integer_marks_allocated_throws_exception():
 	save_message('alias', 'message', 'muhahaha')
 
+@nose.with_setup(setup=database.empty_database)
+def test__create_student_if_doesnt_already_exist_with_non_existent_student():
+	assert None is Student.query.filter_by(school_id="umtest1").first()
+	student = _create_student_if_doesnt_already_exist("umtest1")
+	assert student == Student.query.filter_by(school_id="umtest1").first()
+
+	assert None is Student.query.filter_by(school_id="umtest2").first()
+	student = _create_student_if_doesnt_already_exist("umtest2")
+	assert student == Student.query.filter_by(school_id="umtest2").first()
+
+	assert None is Student.query.filter_by(school_id="umtest3").first()
+	student = _create_student_if_doesnt_already_exist("umtest3")
+	assert student == Student.query.filter_by(school_id="umtest3").first()		
+
+	assert Student.query.count() == 3
+
+@nose.with_setup(setup=database.empty_database)
+def test__create_student_if_doesnt_already_exist_with_existent_student():	
+	student_expected = create_student("umtest1")
+	assert student_expected == Student.query.filter_by(school_id="umtest1").first()
+	
+	student = _create_student_if_doesnt_already_exist("umtest1")
+	assert student == student_expected
+
+	student = _create_student_if_doesnt_already_exist("umtest1")
+	assert student == student_expected	
+
+	assert Student.query.count() == 1
+
+@nose.with_setup(setup=database.empty_database)
+def test__append_assignment_to_existing_student_if_he_doesnt_already_have_it():
+	#create student and check if student exists
+	student = create_student("umtest1")
+	assert student == Student.query.filter_by(school_id="umtest1").first()
+	
+	assert None is query_assignment("umtest1", "1010", 1)
+	assignment = _append_assignment_to_existing_student_if_he_doesnt_already_have_it(
+		"umtest1",
+		"1010",
+		1
+	)
+	assert assignment == query_assignment("umtest1", "1010", 1)
+
+	assert None is query_assignment("umtest1", "1010", 2)
+	assignment = _append_assignment_to_existing_student_if_he_doesnt_already_have_it(
+		"umtest1",
+		"1010",
+		2
+	)
+	assert assignment == query_assignment("umtest1", "1010", 2)
+
+	assert None is query_assignment("umtest1", "COMP1020", 1)
+	assignment = _append_assignment_to_existing_student_if_he_doesnt_already_have_it(
+		"umtest1",
+		"COMP1020",
+		1
+	)
+	assert assignment == query_assignment("umtest1", "COMP1020", 1)	
+
+	assert Assignment.query.count() == 3
+
+@nose.tools.raises(AttributeError)
+@nose.with_setup(setup=database.empty_database)
+def test__append_assignment_to_NON_existing_student_raises_exception():
+	assert None is Student.query.filter_by(school_id="umtest1").first()
+	assert None is query_assignment("umtest1", "1010", 1)
+	_append_assignment_to_existing_student_if_he_doesnt_already_have_it(
+		"umtest1",
+		"1010",
+		1
+	)
+
+@nose.with_setup(setup=database.empty_database)
+def test_append_feedback_with_existing_data():
+	add_initial_data_to_database()
+	success_message = "Feedback message successfully appended."
+	failure_message = "*** Alias doesn't exist. Use the newfbmsg " \
+		"command to create a feedback message."
+	
+	assignment1 = Assignment.query.get(("umtest", "COMP 4350", 1))
+	assignment2 = Assignment.query.get(("umtest", "COMP 4350", 2))
+	assert len(assignment1.feedback_messages) == 0	
+	assert len(assignment2.feedback_messages) == 0
+
+	assert success_message == append_feedback("const", "umtest", "COMP 4350", 1)
+	assert len(assignment1.feedback_messages) == 1
+	assert (assignment1.feedback_messages)[0] == "You should have been using constants in you assignment!"
+
+	assert success_message == append_feedback("const", "umtest", "COMP 4350", 2)
+	assert len(assignment2.feedback_messages) == 1
+	assert (assignment2.feedback_messages)[0] == "You should have been using constants in you assignment!"
+
+	assert success_message == append_feedback("rec", "umtest", "COMP 4350", 1)
+	assert len(assignment1.feedback_messages) == 2
+
+	assert success_message == append_feedback("dup", "umtest", "COMP 4350", 1)
+	assert len(assignment1.feedback_messages) == 3	
+
+	assert failure_message == append_feedback("rec", "umtest", "COMP 4350", 1)
+	assert len(assignment1.feedback_messages) == 3
+
+	assert failure_message == append_feedback("dup", "umtest", "COMP 4350", 1)
+	assert len(assignment1.feedback_messages) == 3		
+
+@nose.with_setup(setup=database.empty_database)
+def test_append_feedback_creating_new_student_and_assignment():
+	add_initial_data_to_database()
+	success_message = "Feedback message successfully appended."
+	failure_message = "*** Alias doesn't exist. Use the newfbmsg " \
+		"command to create a feedback message."
+	
+	assert None is Student.query.get("umnull")
+	assert None is Assignment.query.get(("umnull", "COMP 4350", 1))
+
+	assert success_message == append_feedback("const", "umnull", "COMP 4350", 1)
+	assert None is not Student.query.get("umnull")
+	assignment = Assignment.query.get(("umnull", "COMP 4350", 1))
+	assert None is not assignment
+	assert len(assignment.feedback_messages) == 1
+	assert (assignment1.feedback_messages)[0] == "You should have been using constants in you assignment!"
+
+	assert failure_message == append_feedback("const", "umnull", "COMP 4350", 1)
+	assert len(assignment.feedback_messages) == 1
+	assert (assignment1.feedback_messages)[0] == "You should have been using constants in you assignment!"
+
+@nose.with_setup(setup=database.empty_database)
+def test_append_feedback_creating_new_assignment():
+	add_initial_data_to_database()
+	success_message = "Feedback message successfully appended."
+	failure_message = "*** Alias doesn't exist. Use the newfbmsg " \
+		"command to create a feedback message."
+	
+	assert None is not Student.query.get("umtest")
+	assert None is Assignment.query.get(("umtest", "COMP1010", 1))
+
+	assert success_message == append_feedback("const", "umtest", "COMP1010", 1)
+	assignment = Assignment.query.get(("umtest", "COMP1010", 1))
+	assert None is not assignment
+	assert len(assignment.feedback_messages) == 1
+	assert (assignment1.feedback_messages)[0] == "You should have been using constants in you assignment!"
+
+	assert failure_message == append_feedback("const", "umtest", "COMP1010", 1)
+	assert len(assignment.feedback_messages) == 1
+	assert (assignment1.feedback_messages)[0] == "You should have been using constants in you assignment!"
+
+@nose.with_setup(setup=database.empty_database)
+def test_append_feedback_with_bogus_alias():	
+	add_initial_data_to_database()
+	success_message = "Feedback message successfully appended."
+	failure_message = "*** Alias doesn't exist. Use the newfbmsg " \
+		"command to create a feedback message."
+
+	assignment = Assignment.query.get(("umtest", "COMP 4350", 1))
+
+	assert None is not Student.query.get("umtest")
+	assert None is not assignment
+
+	assert len(assignment.feedback_messages) == 0
+	assert failure_message == append_feedback("bogus", "umtest", "COMP 4350", 1)
+	assert len(assignment.feedback_messages) == 0
+
+	assert len(assignment.feedback_messages) == 0
+	assert failure_message == append_feedback("bogubogu", "umtest", "COMP 4350", 1)
+	assert len(assignment.feedback_messages) == 0
+
+	assert len(assignment.feedback_messages) == 0
+	assert failure_message == append_feedback(100, "umtest", "COMP 4350", 1)
+	assert len(assignment.feedback_messages) == 0		
+
+def query_assignment(school_id, assignment_course, assignment_number):
+	return Assignment.query.filter_by(
+		student_school_id=school_id,
+		course=assignment_course,
+		number=assignment_number
+	).first()	
+
+def create_student(school_id):
+	db_session = database.session
+	student = Student(school_id)
+	db_session.add(student)
+	db_session.flush()
+	return student

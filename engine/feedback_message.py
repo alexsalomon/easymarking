@@ -1,6 +1,7 @@
 from database_models import database
 from database_models.transaction import commit_on_success
 from database_models.student import Student
+from database_models.assignment import Assignment
 from database_models.feedback_message import FeedbackMessage, FBMessageAlias
 
 @commit_on_success
@@ -17,29 +18,59 @@ def save_message(alias, message, marks_allocated):
 		return "*** This alias is already representing another message."
 
 @commit_on_success
-def append_feedback(alias, school_id):
+def append_feedback(alias, school_id, assignment_course, assignment_number):
 	"Uses a pre-defined feedback message to provide feedback to a student"
 	db_session = database.session
 
-	# __create_student_if_doesnt_already_exist(school_id)
+	student = _create_student_if_doesnt_already_exist(school_id)
+	assignment =  _append_assignment_to_existing_student_if_he_doesnt_already_have_it(
+		school_id,
+		assignment_course, 
+		assignment_number
+	)
 
-	# alias = FBMessageAlias.query.get(alias)
-	# feedback_message = FeedbackMessage.query.get(alias.message_id)
-	# assignment = Assignment.query.get("COMP 4350", 1).first()
+	#TODO: Find a better way to query for feedback_message given alias
+	alias_obj = FBMessageAlias.query.get(alias)
+	if alias_obj is not None:
+		feedback_message = FeedbackMessage.query.get(alias_obj.message_id)
+	else:
+		feedback_message = None
 
-	# if alias and student:
-	# 	db_session.add( assignment.append(feedback_message) )
-	# 	return "Feedback message successfully appended."
-	# else:
-	# 	return "*** Alias doesn't exist. Use the newfbmsg command to " \
-	# 		"create a feedback message."
-	return "Needs to implement"
+	if assignment is not None and feedback_message is not None:
+		assignment.feedback_messages.append(feedback_message)
+		return "Feedback message successfully appended."
+	else:
+		return "*** Alias doesn't exist. Use the newfbmsg command to " \
+			"create a feedback message."
 
-def __create_student_if_doesnt_already_exist(school_id):
+def _create_student_if_doesnt_already_exist(school_id):
 	db_session = database.session
+	student = Student.query.filter_by(school_id=school_id).first()
 
-	if Student.query.filter_by(school_id=school_id).first() is None:
+	if student is None:
 		student = Student(school_id)
-		student.assignments.append(Assignment("COMP 4350", 1))	
+		db_session.add(student)
+		db_session.flush()
+
+	return student
+
+def _append_assignment_to_existing_student_if_he_doesnt_already_have_it(
+	school_id,
+	assignment_course, 
+	assignment_number
+):
+	db_session = database.session
+	assignment = Assignment.query.filter_by(
+		student_school_id=school_id,
+		course=assignment_course,
+		number=assignment_number
+	).first()
+
+	if assignment is None:
+		student = Student.query.filter_by(school_id=school_id).first()
+		assignment = Assignment(assignment_course, assignment_number)
+		student.assignments.append(assignment)	
 		db_session.add( student )
 		db_session.flush()
+
+	return assignment

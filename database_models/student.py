@@ -12,6 +12,6 @@ class Student(database.Base):
         self.school_id = school_id
 
     def __repr__(self):
-        return '<Student %r>' % (
+        return '<Student school_id=%r>' % (
             self.school_id
         )      

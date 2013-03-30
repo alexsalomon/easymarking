@@ -61,3 +61,18 @@ def test_calculate_marks_deducted_for_student_assignment():
 
 	mark_sum = calculate_marks_deducted_for_student_assignment("umkonkin", "COMP 4350", 1)
 	assert mark_sum is None
+
+	mark_sum = calculate_marks_deducted_for_student_assignment("umbogus", "COMP 4350", 1)
+	assert mark_sum is None	
+
+	mark_sum = calculate_marks_deducted_for_student_assignment("umkonkin", "bogus", 1)
+	assert mark_sum is None	
+
+	mark_sum = calculate_marks_deducted_for_student_assignment("umkonkin", "COMP 4350", 10000)
+	assert mark_sum is None
+
+	mark_sum = calculate_marks_deducted_for_student_assignment("umkonkin", "COMP 4350", -1)
+	assert mark_sum is None
+
+	mark_sum = calculate_marks_deducted_for_student_assignment("bogus", "bogus", -1)
+	assert mark_sum is None	
