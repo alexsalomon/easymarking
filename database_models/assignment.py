@@ -5,24 +5,26 @@ from sqlalchemy.orm import relationship
 appended_feedback = Table(
     'appended_feedback', 
     database.Base.metadata,  
+    Column('student_school_id', Integer),
     Column('assignment_course', Integer),
     Column('assignment_number', Integer),
     Column('feedback_message_id', Integer, ForeignKey('feedback_messages.id')),
     ForeignKeyConstraint(
-        ['assignment_course', 'assignment_number'],
-        ['assignments.course', 'assignments.number']
+        ['student_school_id', 'assignment_course', 'assignment_number'],
+        ['assignments.student_school_id', 'assignments.number', 'assignments.number']
     )    
 )
 
 class Assignment(database.Base):
     __tablename__ = 'assignments'
 
+    student_school_id = Column(
+        Integer,
+        ForeignKey('students.school_id', ondelete='CASCADE'),
+        primary_key=True
+    )
     course = Column(String(20), primary_key=True)
     number = Column(Integer, primary_key=True)
-    student_id = Column(
-        Integer,
-        ForeignKey('students.id', ondelete='CASCADE')
-    )
     final_grade = Column(String(3))
     feedback_messages = relationship(
         "FeedbackMessage",
@@ -34,9 +36,8 @@ class Assignment(database.Base):
         self.course = course
 
     def __repr__(self):
-        return '<Assignment course=%r number=%r student_id=%r final_grade=%r>' % (
-            self.course,
-            self.number,
+        return '<Assignment student_id=%r course=%r number=%r>' % (
             self.student_id,
-            self.final_grade
+            self.course,
+            self.number
         )      

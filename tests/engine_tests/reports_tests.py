@@ -53,11 +53,11 @@ def test_calculate_marks_deducted_for_student_assignment():
 	add_initial_data_to_database()
 	db_session = database.session
 
-	sum = calculate_marks_deducted_for_student_assignment("umtest", "COMP 4350", 1)
-	assert sum == 2.5
+	mark_sum = calculate_marks_deducted_for_student_assignment("umtest", "COMP 4350", 1)
+	assert mark_sum == 2.5
 
-	sum = calculate_marks_deducted_for_student_assignment("umtest", "COMP 4350", 2)
-	assert sum == 10
+	mark_sum = calculate_marks_deducted_for_student_assignment("umtest", "COMP 4350", 2)
+	assert mark_sum == 10
 
-	sum = calculate_marks_deducted_for_student_assignment("umkonkin", "COMP 4350", 1)
-	assert sum == 0
+	mark_sum = calculate_marks_deducted_for_student_assignment("umkonkin", "COMP 4350", 1)
+	assert mark_sum is None

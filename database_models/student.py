@@ -5,8 +5,7 @@ import database
 class Student(database.Base):
     __tablename__ = 'students'
 
-    id = Column(Integer, primary_key=True)
-    school_id = Column(String(50), unique=True, nullable=False)
+    school_id = Column(String(50), primary_key=True)
     assignments = relationship("Assignment")
 
     def __init__(self, school_id):
