@@ -4,8 +4,6 @@
 *.swp
 *~
 ._*
-
-# Xcode
 *.DS_Store
 build/
 *.pbxuser

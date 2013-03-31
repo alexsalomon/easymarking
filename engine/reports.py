@@ -9,26 +9,27 @@ def generate_individual_student_report(
 	assignment_course, 
 	assignment_number
 ):
-	#try:
-	file_path = create_file_path(
-		student_id, 
-		assignment_course, 
-		assignment_number
-	)
-	report_file = open(file_path, 'w')	
+	try:
+		file_path = create_file_path(
+			student_id, 
+			assignment_course, 
+			assignment_number
+		)
+		report_file = open(file_path, 'w')	
 
-	assignment = Assignment.query.filter_by(
-		student_school_id=student_id,
-		course=assignment_course,
-		number=assignment_number
-	).first()
+		assignment = Assignment.query.filter_by(
+			student_school_id=student_id,
+			course=assignment_course,
+			number=assignment_number
+		).first()
 
-	insert_marks_achieved_to_assignment_based_on_feedback_messages(assignment)
-	add_initial_student_feedback_message_to_file(report_file, assignment)
-	write_student_feedback_information_to_file(report_file, assignment)	
-	report_file.close()
-	#except:
-	#	print "*** Report could not be generated"
+		insert_marks_achieved_to_assignment_based_on_feedback_messages(assignment)
+		add_initial_student_feedback_message_to_file(report_file, assignment)
+		write_student_feedback_information_to_file(report_file, assignment)	
+		report_file.close()
+		print "Report for student '" + student_id + "' was successfully generated"
+	except:
+		print "*** Report could not be generated"
 
 def get_file_path(student_id, assignment_course, assignment_number):
 	project_dir = os.getcwd()
