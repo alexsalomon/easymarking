@@ -29,14 +29,13 @@ def append_feedback(alias, school_id, assignment_course, assignment_number):
 		assignment_number
 	)
 
-	#TODO: Find a better way to query for feedback_message given alias
-	alias_obj = FBMessageAlias.query.get(alias)
-	if alias_obj is not None:
-		feedback_message = FeedbackMessage.query.get(alias_obj.message_id)
-	else:
-		feedback_message = None
+	feedback_message = FeedbackMessage.query.join(
+		FBMessageAlias
+	).filter_by(
+		alias=alias
+	).first()
 
-	if assignment is not None and feedback_message is not None:
+	if feedback_message is not None and feedback_message not in assignment.feedback_messages:
 		assignment.feedback_messages.append(feedback_message)
 		return "Feedback message successfully appended."
 	else:

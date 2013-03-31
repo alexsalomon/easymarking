@@ -11,7 +11,6 @@ from database_models.transaction import commit_on_success
 
 database.init('test_database')
 
-@commit_on_success
 def add_initial_data_to_database():
 	db_session = database.session
 
@@ -19,7 +18,7 @@ def add_initial_data_to_database():
 	student2 = Student("umtest")
 	db_session.add(student1)
 	db_session.add(student2)
-	db_session.flush()
+	db_session.commit()
 
 	assignment1 = Assignment("COMP 4350", 1)
 	assignment2 = Assignment("COMP 4350", 2)
@@ -44,7 +43,7 @@ def add_initial_data_to_database():
 	db_session.add(feedback_message1)
 	db_session.add(feedback_message2)
 	db_session.add(feedback_message3)
-	db_session.flush()
+	db_session.commit()
 
 @nose.with_setup(setup=database.empty_database)
 def test_save_message_multiple_times_succeeds():
@@ -207,19 +206,19 @@ def test_append_feedback_with_existing_data():
 	success_message = "Feedback message successfully appended."
 	failure_message = "*** Alias doesn't exist. Use the newfbmsg " \
 		"command to create a feedback message."
-	
-	assignment1 = Assignment.query.get(("umtest", "COMP 4350", 1))
-	assignment2 = Assignment.query.get(("umtest", "COMP 4350", 2))
+
+	assignment1 = query_assignment("umtest", "COMP 4350", 1)
+	assignment2 = query_assignment("umtest", "COMP 4350", 2)
 	assert len(assignment1.feedback_messages) == 0	
 	assert len(assignment2.feedback_messages) == 0
 
 	assert success_message == append_feedback("const", "umtest", "COMP 4350", 1)
 	assert len(assignment1.feedback_messages) == 1
-	assert (assignment1.feedback_messages)[0] == "You should have been using constants in you assignment!"
+	assert (assignment1.feedback_messages)[0].message == "You should have been using constants in you assignment!"
 
 	assert success_message == append_feedback("const", "umtest", "COMP 4350", 2)
 	assert len(assignment2.feedback_messages) == 1
-	assert (assignment2.feedback_messages)[0] == "You should have been using constants in you assignment!"
+	assert (assignment2.feedback_messages)[0].message == "You should have been using constants in you assignment!"
 
 	assert success_message == append_feedback("rec", "umtest", "COMP 4350", 1)
 	assert len(assignment1.feedback_messages) == 2
@@ -241,18 +240,18 @@ def test_append_feedback_creating_new_student_and_assignment():
 		"command to create a feedback message."
 	
 	assert None is Student.query.get("umnull")
-	assert None is Assignment.query.get(("umnull", "COMP 4350", 1))
+	assert None is query_assignment("umnull", "COMP 4350", 1)
 
 	assert success_message == append_feedback("const", "umnull", "COMP 4350", 1)
 	assert None is not Student.query.get("umnull")
-	assignment = Assignment.query.get(("umnull", "COMP 4350", 1))
+	assignment = query_assignment("umnull", "COMP 4350", 1)
 	assert None is not assignment
 	assert len(assignment.feedback_messages) == 1
-	assert (assignment1.feedback_messages)[0] == "You should have been using constants in you assignment!"
+	assert (assignment.feedback_messages)[0].message == "You should have been using constants in you assignment!"
 
 	assert failure_message == append_feedback("const", "umnull", "COMP 4350", 1)
 	assert len(assignment.feedback_messages) == 1
-	assert (assignment1.feedback_messages)[0] == "You should have been using constants in you assignment!"
+	assert (assignment.feedback_messages)[0].message == "You should have been using constants in you assignment!"
 
 @nose.with_setup(setup=database.empty_database)
 def test_append_feedback_creating_new_assignment():
@@ -262,17 +261,17 @@ def test_append_feedback_creating_new_assignment():
 		"command to create a feedback message."
 	
 	assert None is not Student.query.get("umtest")
-	assert None is Assignment.query.get(("umtest", "COMP1010", 1))
+	assert None is query_assignment("umtest", "COMP1010", 1)
 
 	assert success_message == append_feedback("const", "umtest", "COMP1010", 1)
-	assignment = Assignment.query.get(("umtest", "COMP1010", 1))
+	assignment = query_assignment("umtest", "COMP1010", 1)
 	assert None is not assignment
 	assert len(assignment.feedback_messages) == 1
-	assert (assignment1.feedback_messages)[0] == "You should have been using constants in you assignment!"
+	assert (assignment.feedback_messages)[0].message == "You should have been using constants in you assignment!"
 
 	assert failure_message == append_feedback("const", "umtest", "COMP1010", 1)
 	assert len(assignment.feedback_messages) == 1
-	assert (assignment1.feedback_messages)[0] == "You should have been using constants in you assignment!"
+	assert (assignment.feedback_messages)[0].message == "You should have been using constants in you assignment!"
 
 @nose.with_setup(setup=database.empty_database)
 def test_append_feedback_with_bogus_alias():	
@@ -281,7 +280,7 @@ def test_append_feedback_with_bogus_alias():
 	failure_message = "*** Alias doesn't exist. Use the newfbmsg " \
 		"command to create a feedback message."
 
-	assignment = Assignment.query.get(("umtest", "COMP 4350", 1))
+	assignment = query_assignment("umtest", "COMP 4350", 1)
 
 	assert None is not Student.query.get("umtest")
 	assert None is not assignment
@@ -309,5 +308,5 @@ def create_student(school_id):
 	db_session = database.session
 	student = Student(school_id)
 	db_session.add(student)
-	db_session.flush()
+	db_session.commit()
 	return student
