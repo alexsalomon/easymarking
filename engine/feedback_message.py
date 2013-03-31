@@ -18,15 +18,22 @@ def save_message(alias, message, marks_allocated):
 		return "*** This alias is already representing another message."
 
 @commit_on_success
-def append_feedback(alias, school_id, assignment_course, assignment_number):
+def append_feedback(
+	alias, 
+	school_id, 
+	assignment_course, 
+	assignment_number, 
+	maximum_marks
+):
 	"Uses a pre-defined feedback message to provide feedback to a student"
 	db_session = database.session
 
 	student = _create_student_if_doesnt_already_exist(school_id)
-	assignment =  _append_assignment_to_existing_student_if_he_doesnt_already_have_it(
+	assignment =  _create_assignment_to_existing_student_if_not_previoulsy_created(
 		school_id,
 		assignment_course, 
-		assignment_number
+		assignment_number,
+		maximum_marks
 	)
 
 	feedback_message = FeedbackMessage.query.join(
@@ -53,10 +60,11 @@ def _create_student_if_doesnt_already_exist(school_id):
 
 	return student
 
-def _append_assignment_to_existing_student_if_he_doesnt_already_have_it(
+def _create_assignment_to_existing_student_if_not_previoulsy_created(
 	school_id,
 	assignment_course, 
-	assignment_number
+	assignment_number,
+	maximum_marks
 ):
 	db_session = database.session
 	assignment = Assignment.query.filter_by(
@@ -67,7 +75,7 @@ def _append_assignment_to_existing_student_if_he_doesnt_already_have_it(
 
 	if assignment is None:
 		student = Student.query.filter_by(school_id=school_id).first()
-		assignment = Assignment(assignment_course, assignment_number)
+		assignment = Assignment(assignment_course, assignment_number, maximum_marks)
 		student.assignments.append(assignment)	
 		db_session.add( student )
 		db_session.flush()

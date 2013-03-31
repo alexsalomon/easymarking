@@ -1,0 +1,8 @@
+Hi,
+
+Your mark for COMP 4350 Assignment 1 is [91.0/100]
+
+Feedback:
+-	const olele [-1.0]
+-	rec omama [-5.0]
+-	dup olala [-3.0]

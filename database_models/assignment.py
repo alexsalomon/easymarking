@@ -25,15 +25,17 @@ class Assignment(database.Base):
     )
     course = Column(String(20), primary_key=True)
     number = Column(Integer, primary_key=True)
-    final_grade = Column(String(3))
+    marks_achieved = Column(Integer)
+    maximum_marks = Column(Integer, nullable=False)
     feedback_messages = relationship(
         "FeedbackMessage",
         secondary=appended_feedback
     )
 
-    def __init__(self, course, number):
+    def __init__(self, course, number, maximum_marks):
         self.number = number
         self.course = course
+        self.maximum_marks = maximum_marks
 
     def __repr__(self):
         return '<Assignment student_id=%r course=%r number=%r>' % (

@@ -3,7 +3,7 @@ from  sqlalchemy.exc import StatementError
 from database_models import database
 from engine.feedback_message import save_message, append_feedback
 from engine.feedback_message import _create_student_if_doesnt_already_exist
-from engine.feedback_message import _append_assignment_to_existing_student_if_he_doesnt_already_have_it
+from engine.feedback_message import _create_assignment_to_existing_student_if_not_previoulsy_created
 from database_models.feedback_message import FBMessageAlias, FeedbackMessage
 from database_models.student import Student
 from database_models.assignment import Assignment
@@ -158,13 +158,13 @@ def test__create_student_if_doesnt_already_exist_with_existent_student():
 	assert Student.query.count() == 1
 
 @nose.with_setup(setup=database.empty_database)
-def test__append_assignment_to_existing_student_if_he_doesnt_already_have_it():
+def test__create_assignment_to_existing_student_if_not_previoulsy_created():
 	#create student and check if student exists
 	student = create_student("umtest1")
 	assert student == Student.query.filter_by(school_id="umtest1").first()
 	
 	assert None is query_assignment("umtest1", "1010", 1)
-	assignment = _append_assignment_to_existing_student_if_he_doesnt_already_have_it(
+	assignment = _create_assignment_to_existing_student_if_not_previoulsy_created(
 		"umtest1",
 		"1010",
 		1
@@ -172,7 +172,7 @@ def test__append_assignment_to_existing_student_if_he_doesnt_already_have_it():
 	assert assignment == query_assignment("umtest1", "1010", 1)
 
 	assert None is query_assignment("umtest1", "1010", 2)
-	assignment = _append_assignment_to_existing_student_if_he_doesnt_already_have_it(
+	assignment = _create_assignment_to_existing_student_if_not_previoulsy_created(
 		"umtest1",
 		"1010",
 		2
@@ -180,7 +180,7 @@ def test__append_assignment_to_existing_student_if_he_doesnt_already_have_it():
 	assert assignment == query_assignment("umtest1", "1010", 2)
 
 	assert None is query_assignment("umtest1", "COMP1020", 1)
-	assignment = _append_assignment_to_existing_student_if_he_doesnt_already_have_it(
+	assignment = _create_assignment_to_existing_student_if_not_previoulsy_created(
 		"umtest1",
 		"COMP1020",
 		1
@@ -194,7 +194,7 @@ def test__append_assignment_to_existing_student_if_he_doesnt_already_have_it():
 def test__append_assignment_to_NON_existing_student_raises_exception():
 	assert None is Student.query.filter_by(school_id="umtest1").first()
 	assert None is query_assignment("umtest1", "1010", 1)
-	_append_assignment_to_existing_student_if_he_doesnt_already_have_it(
+	_create_assignment_to_existing_student_if_not_previoulsy_created(
 		"umtest1",
 		"1010",
 		1
