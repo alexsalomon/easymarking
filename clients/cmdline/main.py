@@ -2,7 +2,7 @@
 
 import cmd, shlex
 from parser import Parser
-from engine.reports import generate_individual_student_report
+from engine.reports import generate_individual_student_feedback_report
 from engine.feedback_message import save_message, append_feedback
 
 class CmdlineInterface(cmd.Cmd):
@@ -37,7 +37,7 @@ class CmdlineInterface(cmd.Cmd):
 
 	#def help_sturep(self): Parser.get_parser('mkfb').print_help()
 	def do_sturep(self, line):
-		generate_individual_student_report('umkonkin', "COMP 4350", 1)
+		generate_individual_student_feedback_report('umkonkin', "COMP 4350", 1)
 
 	def default(self, line):
 		print "*** Unknown command: " + line
