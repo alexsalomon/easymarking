@@ -20,9 +20,25 @@ def generate_individual_student_feedback_report(
 		report_obj = report_manager.get_report("individual_student_feedback")
 		report_obj.set_assignment(assignment)
 		report_obj.generate()
-		print "Report for student '" + student_id + "' was successfully generated"
+		print "Report for student '" + student_id + \
+			"' was successfully generated."
 	except:
-		print "*** Report could not be generated"
+		print "*** Report could not be generated."
+
+def generate_assignment_feedback_report(
+	student_id, 
+	course_id, 
+	assignment_number
+):
+	try:
+		report_manager = ReportManager()
+		report_obj = report_manager.get_report("assignment_feedback")
+		report_obj.generate()
+		print "Report for assignment '" + course_id + " - A" + \
+			assignment_number + "' was successfully generated."
+	except:
+		print "*** Report could not be generated."
+
 
 class ReportManager():
 	""" ReportManager manages reports by creating a Report
@@ -31,6 +47,8 @@ class ReportManager():
 	def get_report(self, report_name):
 		if report_name == "individual_student_feedback":
 			return StudentFeedbackReport()
+		if report_name == "assignment_feedback":
+			return AssignmentFeedbackReport()			
 
 class Report():
 	__metaclass__ = abc.ABCMeta
@@ -41,7 +59,31 @@ class Report():
 		print "Should never hit this method"
 		return
 
-class StudentFeedbackReport():
+class AssignmentFeedbackReport(Report):
+
+	def __repr__(self):
+		return '<AssignmentFeedbackReport assignment=%r>' % (
+			self.assignment
+		)
+
+	def set_assignment(self, assignment):
+		self.assignment = assignment
+
+	def generate(self):
+		raise "NotImplemented"
+		# #Every report needs a path to be written to
+		# file_path = self.create_file_path()
+		# #every report needs a file handler to write
+		# report_file = open(file_path, 'w')	
+
+		# course = get_course()
+		# assignments = course.assignments WHERE number = assignment_number
+		# for assignment in assignments:
+		# 	#write to file
+
+		# report_file.close()	
+
+class StudentFeedbackReport(Report):
 
 	def __repr__(self):
 		return '<StudentFeedbackReport assignment=%r>' % (
