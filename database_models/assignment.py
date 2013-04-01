@@ -12,14 +12,14 @@ appended_feedback = Table(
     Column('feedback_message_id', Integer, ForeignKey('feedback_messages.id')),
     ForeignKeyConstraint(
         ['student_id', 'course_id', 'assignment_number'],
-        ['assignments.student_school_id', 'assignments.course_id', 'assignments.number']
+        ['assignments.student_id', 'assignments.course_id', 'assignments.number']
     )    
 )
 
 class Assignment(database.Base):
     __tablename__ = 'assignments'
 
-    student_school_id = Column(
+    student_id = Column(
         String(20),
         ForeignKey('students.school_id', ondelete='CASCADE'),
         primary_key=True
@@ -37,14 +37,15 @@ class Assignment(database.Base):
         secondary=appended_feedback
     )
 
-    def __init__(self, course, number, maximum_marks):
+    def __init__(self, student_id, course_id, number, maximum_marks):
+        self.student_id = student_id
+        self.course_id = course_id
         self.number = number
-        self.course = course
         self.maximum_marks = maximum_marks
 
     def __repr__(self):
-        return '<Assignment student_id=%r course=%r number=%r>' % (
+        return '<Assignment student_id=%r course_id=%r number=%r>' % (
             self.student_id,
-            self.course,
+            self.course_id,
             self.number
         )      

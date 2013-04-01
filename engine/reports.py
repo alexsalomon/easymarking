@@ -6,20 +6,20 @@ from database_models.student import Student
 
 def generate_individual_student_report(
 	student_id, 
-	assignment_course, 
+	course_id, 
 	assignment_number
 ):
 	try:
 		file_path = create_file_path(
 			student_id, 
-			assignment_course, 
+			course_id, 
 			assignment_number
 		)
 		report_file = open(file_path, 'w')	
 
 		assignment = Assignment.query.filter_by(
-			student_school_id=student_id,
-			course=assignment_course,
+			student_id=student_id,
+			course_id=course_id,
 			number=assignment_number
 		).first()
 
@@ -31,16 +31,16 @@ def generate_individual_student_report(
 	except:
 		print "*** Report could not be generated"
 
-def get_file_path(student_id, assignment_course, assignment_number):
+def get_file_path(student_id, course_id, assignment_number):
 	project_dir = os.getcwd()
 	reports_dir = project_dir+'/bin/reports/'
 	student_dir = reports_dir+student_id+'/'
-	course_dir = student_dir+assignment_course+'/'
+	course_dir = student_dir+course_id+'/'
 	file_path = course_dir+'A'+str(assignment_number)+'_feedback.txt'
 	return file_path
 
-def create_file_path(student_id, assignment_course, assignment_number):
-	file_path = get_file_path(student_id, assignment_course, assignment_number)
+def create_file_path(student_id, course_id, assignment_number):
+	file_path = get_file_path(student_id, course_id, assignment_number)
 	file_dir = (file_path.rsplit('/', 1))[0]
 	create_folders_if_non_existent(file_dir)
 	return file_path
@@ -51,7 +51,7 @@ def create_folders_if_non_existent(directory):
 
 def add_initial_student_feedback_message_to_file(report_file, assignment):
 	report_file.write(
-		"Hi,\n\nYour mark for " + assignment.course + " Assignment " + \
+		"Hi,\n\nYour mark for " + assignment.course_id + " Assignment " + \
 		str(assignment.number) + " is [" + str(assignment.marks_achieved) + \
 		"/" + str(assignment.maximum_marks) + "]" + "\n\nFeedback:\n"
 	)

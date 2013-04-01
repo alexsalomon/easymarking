@@ -297,10 +297,10 @@ def test_append_feedback_with_bogus_alias():
 	assert failure_message == append_feedback(100, "umtest", "COMP 4350", 1)
 	assert len(assignment.feedback_messages) == 0		
 
-def query_assignment(school_id, assignment_course, assignment_number):
+def query_assignment(school_id, course_id, assignment_number):
 	return Assignment.query.filter_by(
-		student_school_id=school_id,
-		course=assignment_course,
+		student_id=school_id,
+		course_id=course_id,
 		number=assignment_number
 	).first()	
 

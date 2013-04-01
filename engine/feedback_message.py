@@ -1,5 +1,6 @@
 from database_models import database
 from database_models.transaction import commit_on_success
+from database_models.course import Course
 from database_models.student import Student
 from database_models.assignment import Assignment
 from database_models.feedback_message import FeedbackMessage, FBMessageAlias
@@ -21,17 +22,18 @@ def save_message(alias, message, marks_allocated):
 def append_feedback(
 	alias, 
 	school_id, 
-	assignment_course, 
+	course_id, 
 	assignment_number, 
 	maximum_marks
 ):
 	"Uses a pre-defined feedback message to provide feedback to a student"
 	db_session = database.session
 
-	student = _create_student_if_doesnt_already_exist(school_id)
+	_create_student_if_doesnt_already_exist(school_id)
+	_create_course_to_existing_student_if_not_previoulsy_created(school_id, course_id)
 	assignment =  _create_assignment_to_existing_student_if_not_previoulsy_created(
 		school_id,
-		assignment_course, 
+		course_id, 
 		assignment_number,
 		maximum_marks
 	)
@@ -60,24 +62,45 @@ def _create_student_if_doesnt_already_exist(school_id):
 
 	return student
 
+def _create_course_to_existing_student_if_not_previoulsy_created(
+	school_id,
+	course_id
+):
+	db_session = database.session
+	course = Course.query.filter_by(course_id=course_id).first()
+
+	if course is None:
+		student = Student.query.filter_by(school_id=school_id).first()
+		course = Course(course_id, "COURSE NAME HARDCODED")
+		student.courses.append(course)	
+		db_session.add( student )
+		db_session.flush()
+
+	return course	
+
 def _create_assignment_to_existing_student_if_not_previoulsy_created(
 	school_id,
-	assignment_course, 
+	course_id, 
 	assignment_number,
 	maximum_marks
 ):
 	db_session = database.session
 	assignment = Assignment.query.filter_by(
-		student_school_id=school_id,
-		course=assignment_course,
+		student_id=school_id,
+		course_id=course_id,
 		number=assignment_number
 	).first()
 
 	if assignment is None:
-		student = Student.query.filter_by(school_id=school_id).first()
-		assignment = Assignment(assignment_course, assignment_number, maximum_marks)
-		student.assignments.append(assignment)	
-		db_session.add( student )
+		course = Course.query.filter_by(course_id=course_id).first()
+		assignment = Assignment(
+			school_id,
+			course_id,
+			assignment_number,
+			maximum_marks
+		)
+		course.assignments.append(assignment)	
+		db_session.add( course )
 		db_session.flush()
 
 	return assignment
