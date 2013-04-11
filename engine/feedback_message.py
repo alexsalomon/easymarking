@@ -6,14 +6,16 @@ from database_models.assignment import Assignment
 from database_models.feedback_message import FeedbackMessage, FBMessageAlias
 
 @commit_on_success
-def save_message(alias, message, marks_allocated):
+def save_message(alias, message, marks_to_deduct):
 	"Stores the feedback message to the database"
 	db_session = database.session
 
 	if not FBMessageAlias.query.get(alias):
-		feedback_message = FeedbackMessage(message, marks_allocated)
-		feedback_message.aliases.append(FBMessageAlias(alias))
-		db_session.add(feedback_message)
+		feedback_message = FeedbackMessage(
+			FBMessageAlias(alias), 
+			message, 
+			marks_to_deduct
+		)
 		return "Message saved successfully under the alias '" + alias + "'."
 	else:
 		return "*** This alias is already representing another message."
@@ -21,7 +23,7 @@ def save_message(alias, message, marks_allocated):
 @commit_on_success
 def append_feedback(
 	alias, 
-	school_id, 
+	student_id, 
 	course_id, 
 	assignment_number, 
 	maximum_marks
@@ -29,10 +31,10 @@ def append_feedback(
 	"Uses a pre-defined feedback message to provide feedback to a student"
 	db_session = database.session
 
-	_create_student_if_doesnt_already_exist(school_id)
-	_create_course_to_existing_student_if_not_previoulsy_created(school_id, course_id)
+	_create_student_if_doesnt_already_exist(student_id)
+	_create_course_to_existing_student_if_not_previoulsy_created(student_id, course_id)
 	assignment =  _create_assignment_to_existing_student_if_not_previoulsy_created(
-		school_id,
+		student_id,
 		course_id, 
 		assignment_number,
 		maximum_marks
@@ -51,26 +53,26 @@ def append_feedback(
 		return "*** Alias doesn't exist. Use the newfbmsg command to " \
 			"create a feedback message."
 
-def _create_student_if_doesnt_already_exist(school_id):
+def _create_student_if_doesnt_already_exist(student_id):
 	db_session = database.session
-	student = Student.query.filter_by(school_id=school_id).first()
+	student = Student.query.filter_by(student_id=student_id).first()
 
 	if student is None:
-		student = Student(school_id)
+		student = Student(student_id)
 		db_session.add(student)
 		db_session.flush()
 
 	return student
 
 def _create_course_to_existing_student_if_not_previoulsy_created(
-	school_id,
+	student_id,
 	course_id
 ):
 	db_session = database.session
 	course = Course.query.filter_by(course_id=course_id).first()
 
 	if course is None:
-		student = Student.query.filter_by(school_id=school_id).first()
+		student = Student.query.filter_by(student_id=student_id).first()
 		course = Course(course_id, "COURSE NAME HARDCODED")
 		student.courses.append(course)	
 		db_session.add( student )
@@ -79,14 +81,14 @@ def _create_course_to_existing_student_if_not_previoulsy_created(
 	return course	
 
 def _create_assignment_to_existing_student_if_not_previoulsy_created(
-	school_id,
+	student_id,
 	course_id, 
 	assignment_number,
 	maximum_marks
 ):
 	db_session = database.session
 	assignment = Assignment.query.filter_by(
-		student_id=school_id,
+		student_id=student_id,
 		course_id=course_id,
 		number=assignment_number
 	).first()
@@ -94,7 +96,7 @@ def _create_assignment_to_existing_student_if_not_previoulsy_created(
 	if assignment is None:
 		course = Course.query.filter_by(course_id=course_id).first()
 		assignment = Assignment(
-			school_id,
+			student_id,
 			course_id,
 			assignment_number,
 			maximum_marks

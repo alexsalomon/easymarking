@@ -27,7 +27,7 @@ class CmdlineInterface(cmd.Cmd):
 			args = parser.parse_args(shlex.split(line))
 			print append_feedback(
 				args.alias, 
-				args.school_id, 
+				args.student_id, 
 				"COMP 4350", 
 				1, 
 				100

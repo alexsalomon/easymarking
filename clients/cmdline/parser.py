@@ -47,7 +47,7 @@ class Parser():
 			help="Feedback message alias"
 		)
 		mkfb_parser.add_argument(
-			'school_id',
+			'student_id',
 			help="Student's school unique identifier"
 		)
 		
