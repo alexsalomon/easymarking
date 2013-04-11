@@ -2,6 +2,7 @@ import database
 from sqlalchemy import Column, Table, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship, backref
 from database_models.course import Course
+from database_models.handed_assignment import HandedAssignment
 
 enrolled = Table(
     'enrolled', 

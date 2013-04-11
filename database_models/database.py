@@ -17,7 +17,7 @@ def init(db_name = "database"):
 @event.listens_for(mapper, 'init')
 def auto_add_to_session(target, args, kwargs):
 	""" Automatically add target to session """
-    session.add(target)
+	session.add(target)
 
 @commit_on_success
 def empty_database():

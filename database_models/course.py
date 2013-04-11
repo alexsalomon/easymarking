@@ -1,6 +1,8 @@
 import database
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import relationship
+from database_models.professor import Professor
+from database_models.assignment import Assignment
 
 class Course(database.Base):
     __tablename__ = 'courses'

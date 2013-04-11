@@ -1,6 +1,8 @@
 import database
 from sqlalchemy import Table, Column, Integer, String, ForeignKey, ForeignKeyConstraint
 from sqlalchemy.orm import relationship
+from database_models.course import Course
+from database_models.assignment import Assignment
 from database_models.feedback_message import FeedbackMessage
 
 appended_feedback = Table(
