@@ -1,5 +1,5 @@
-from sqlalchemy import create_engine
-from sqlalchemy.orm import scoped_session, sessionmaker
+from sqlalchemy import create_engine, event
+from sqlalchemy.orm import scoped_session, sessionmaker, mapper
 from sqlalchemy.ext.declarative import declarative_base
 from transaction import commit_on_success
 
@@ -13,6 +13,11 @@ def init(db_name = "database"):
 
 	Base.query = session.query_property()
 	Base.metadata.create_all(bind=engine)
+
+@event.listens_for(mapper, 'init')
+def auto_add_to_session(target, args, kwargs):
+	""" Automatically add target to session """
+    session.add(target)
 
 @commit_on_success
 def empty_database():
