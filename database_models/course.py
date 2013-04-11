@@ -7,11 +7,15 @@ class Course(database.Base):
 
     course_id = Column(String(20), primary_key=True)
     name = Column(String(100), nullable=False)
+    professor = relationship("Professor")
     assignments = relationship("Assignment")
 
-    def __init__(self, course_id, course_name):
+    def __init__(self, course_id, course_name, professor=None):
         self.course_id = course_id
         self.name = course_name
+
+        if professor is not None:
+            self.professor.append(professor)
 
     def __repr__(self):
         return '<Course course_id=%r>' % (
