@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import cmd, shlex, os
+import cmd, shlex, subprocess
 from parser import Parser
 from engine.reports import generate_individual_student_feedback_report
 from engine.feedback_message import save_message, append_feedback
@@ -40,10 +40,16 @@ class CmdlineInterface(cmd.Cmd):
 		generate_individual_student_feedback_report('umkonkin', "COMP 4350", 1)
 
 	def do_cd(self, line):
-		os.chdir(line)
+		try:
+			if line == "~": 
+				line = os.path.expanduser('~')
+
+			os.chdir(line)
+		except OSError as e:
+			print "cd: " + e.filename + ": " + e.strerror
 
 	def default(self, line):
-		os.system(line)
+		subprocess.call(line, shell=True)
 
 	def do_exit(self, line):
 		return True;		
