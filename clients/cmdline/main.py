@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import cmd, shlex
+import cmd, shlex, os
 from parser import Parser
 from engine.reports import generate_individual_student_feedback_report
 from engine.feedback_message import save_message, append_feedback
@@ -39,9 +39,11 @@ class CmdlineInterface(cmd.Cmd):
 	def do_sturep(self, line):
 		generate_individual_student_feedback_report('umkonkin', "COMP 4350", 1)
 
+	def do_cd(self, line):
+		os.chdir(line)
+
 	def default(self, line):
-		print "*** Unknown command: " + line
-		print ""
+		os.system(line)
 
 	def do_exit(self, line):
 		return True;		
