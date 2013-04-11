@@ -16,4 +16,12 @@ class Professor(database.Base):
         return '<Professor id=%r name=%r>' % (
             self.id,
             self.name
-        )      
+        )     
+
+    @classmethod
+    def create(cls, prof_name, prof_email):
+        return Professor(prof_name, prof_email)
+
+    @classmethod
+    def get(cls, prof_name):
+        return cls.query.filter_by(name=prof_name).first()

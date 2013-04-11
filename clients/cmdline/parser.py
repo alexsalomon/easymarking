@@ -6,12 +6,48 @@ class Parser():
 	def get_parser(cls, command):
 		parser = None
 
-		if command == 'newfbmsg':
-			return cls.__get_newfbmsg_parser()
+		if command == 'ccourse':
+			return cls.__get_ccourse_parser()	
+		elif command == 'newfbmsg':
+			return cls.__get_newfbmsg_parser()		
 		elif command == 'mkfb':
 			return cls.__get_mkfb_parser()			
 		
 		return parser
+
+	@classmethod
+	def __get_ccourse_parser(cls):		
+		ccourse_parser = argparse.ArgumentParser(
+			add_help=False,
+			prog='ccourse'
+		)
+		ccourse_parser.add_argument(
+			'course_id',
+			help="The course id that represents the course being created"
+		)
+		ccourse_parser.add_argument(
+			'-n',
+			dest='course_name',
+			action='store',
+			default=None,
+	        help='The course name'
+		)
+		ccourse_parser.add_argument(
+			'-p',
+			dest='prof_name',
+			action='store',
+			default=None,
+	        help='The name of the professor that is teaching the course'
+		)
+		ccourse_parser.add_argument(
+			'-pe',
+			dest='prof_email',
+			action='store',
+			default=None,
+	        help='The email of the professor that is teaching the course'
+		)
+
+		return ccourse_parser
 
 	@classmethod
 	def __get_newfbmsg_parser(cls):		

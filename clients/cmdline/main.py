@@ -1,15 +1,30 @@
 #!/usr/bin/python
 
-import cmd, shlex, subprocess
+import cmd, shlex, os, subprocess
 from parser import Parser
 from engine.reports import generate_individual_student_feedback_report
 from engine.feedback_message import save_message, append_feedback
+from engine.marking_setup import create_course
 
 class CmdlineInterface(cmd.Cmd):
 
 	intro = 'EasyMarking v1.0 - Type "help" for help.\n' \
 		'Good marking! :)\n'
 	prompt = "easyMarker=# "
+
+	def help_ccourse(self): Parser.get_parser('ccourse').print_help()
+	def do_ccourse(self, line):
+		try:
+			parser = Parser.get_parser('ccourse')
+			args = parser.parse_args(shlex.split(line))
+			print create_course(
+				args.course_id, 
+				args.course_name,
+				args.prof_name, 
+				args.prof_email
+			)
+		except SystemExit:
+			pass
 
 	def help_newfbmsg(self): Parser.get_parser('newfbmsg').print_help()
 	def do_newfbmsg(self, line):
@@ -18,7 +33,7 @@ class CmdlineInterface(cmd.Cmd):
 			args = parser.parse_args(shlex.split(line))
 			print save_message(args.alias, args.message, args.mark_value)
 		except SystemExit:
-			print ""
+			pass
 
 	def help_mkfb(self): Parser.get_parser('mkfb').print_help()
 	def do_mkfb(self, line):
@@ -33,7 +48,7 @@ class CmdlineInterface(cmd.Cmd):
 				100
 			)
 		except SystemExit:
-			print ""	
+			pass
 
 	#def help_sturep(self): Parser.get_parser('mkfb').print_help()
 	def do_sturep(self, line):
@@ -41,8 +56,9 @@ class CmdlineInterface(cmd.Cmd):
 
 	def do_cd(self, line):
 		try:
-			if line == "~": 
-				line = os.path.expanduser('~')
+			# if line.startswith("~"): 
+			# 	line = line.replace("~", os.path.expanduser('~'), 1)
+			line = os.path.expanduser(line)
 
 			os.chdir(line)
 		except OSError as e:

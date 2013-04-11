@@ -21,7 +21,7 @@ class Student(database.Base):
         secondary=enrolled,
         backref="students"
     )    
-    handed_assignments = relationship("HandedAssignments")
+    handed_assignments = relationship("HandedAssignment")
 
     def __init__(self, student_id, email=None):
         self.student_id = student_id
