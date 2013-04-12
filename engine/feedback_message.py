@@ -8,17 +8,21 @@ from database_models.feedback_message import FeedbackMessage, FBMessageAlias
 @commit_on_success
 def save_message(alias, message, marks_to_deduct):
 	"Stores the feedback message in the database"
-	db_session = database.session
+	result_string = ""
 
-	if not FBMessageAlias.query.get(alias):
+	if not FeedbackMessage.contains(alias):
 		feedback_message = FeedbackMessage(
-			FBMessageAlias(alias), 
+			alias, 
 			message, 
 			marks_to_deduct
 		)
-		return "Message saved successfully under the alias '" + alias + "'."
+		result_string = "Message was saved successfully under the alias '" + \
+			alias + "'."
 	else:
-		return "*** This alias is already representing another message."
+		result_string = "*** This alias is already representing " + \
+			"another message."
+
+	return result_string
 
 @commit_on_success
 def append_feedback(

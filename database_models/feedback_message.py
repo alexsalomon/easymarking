@@ -14,7 +14,8 @@ class FeedbackMessage(database.Base):
     aliases = relationship("FBMessageAlias")
 
     def __init__(self, alias, message, marks_to_deduct):
-        self.aliases.append(alias)
+        alias_obj = FBMessageAlias(alias)
+        self.aliases.append(alias_obj)
         self.message = message
         self.marks_to_deduct = marks_to_deduct
 
@@ -23,6 +24,13 @@ class FeedbackMessage(database.Base):
             self.message,
             self.marks_to_deduct
         )      
+
+    @staticmethod
+    def contains(alias):
+        contains = False
+        if FBMessageAlias.query.filter_by(alias=alias).first() is not None:
+            contains = True
+        return contains
 
 class FBMessageAlias(database.Base):
     """ Represents a table containing the aliases feedback
@@ -43,4 +51,4 @@ class FBMessageAlias(database.Base):
         return '<FBMessageAlias message_id=%r, alias=%r>' % (
             self.message_id,
             self.alias
-        )   
+        )           
