@@ -9,7 +9,9 @@ class Parser():
 		if command == 'ccourse':
 			return cls.__get_ccourse_parser()	
 		elif command == 'postasgmnt':
-			return cls.__get_postasgmnt_parser()	
+			return cls.__get_postasgmnt_parser()
+		elif command == 'rcstudents':
+			return cls.__get_rcstudents_parser()				
 		elif command == 'newfbmsg':
 			return cls.__get_newfbmsg_parser()					
 		elif command == 'mkfb':
@@ -72,7 +74,16 @@ class Parser():
 			help="The number of marks the assignment is worth"
 		)
 
-		return postasgmnt_parser		
+		return postasgmnt_parser	
+
+	@classmethod
+	def __get_rcstudents_parser(cls):		
+		rcstudents_parser = argparse.ArgumentParser(
+			add_help=False,
+			prog='rcstudents'
+		)
+
+		return rcstudents_parser				
 
 	@classmethod
 	def __get_newfbmsg_parser(cls):		

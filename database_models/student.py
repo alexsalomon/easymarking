@@ -23,6 +23,10 @@ class Student(database.Base):
     )    
     handed_assignments = relationship("HandedAssignment")
 
+    @classmethod
+    def get(cls, student_id):
+        return cls.query.filter_by(student_id=student_id).first()
+
     def __init__(self, student_id, email=None):
         self.student_id = student_id
         self.email = email
