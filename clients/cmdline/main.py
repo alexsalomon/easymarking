@@ -53,10 +53,10 @@ class CmdlineInterface(cmd.Cmd):
 		except SystemExit:
 			pass						
 
-	def help_newfbmsg(self): Parser.get_parser('newfbmsg').print_help()
-	def do_newfbmsg(self, line):
+	def help_newfd(self): Parser.get_parser('newfd').print_help()
+	def do_newfd(self, line):
 		try:
-			parser = Parser.get_parser('newfbmsg')
+			parser = Parser.get_parser('newfd')
 			args = parser.parse_args(shlex.split(line))
 			print save_message(args.alias, args.message, args.mark_value)
 		except SystemExit:

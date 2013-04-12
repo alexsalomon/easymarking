@@ -12,8 +12,8 @@ class Parser():
 			return cls.__get_postasgmnt_parser()
 		elif command == 'initmarking':
 			return cls.__get_initmarking_parser()				
-		elif command == 'newfbmsg':
-			return cls.__get_newfbmsg_parser()					
+		elif command == 'newfd':
+			return cls.__get_newfd_parser()					
 		elif command == 'mkfb':
 			return cls.__get_mkfb_parser()			
 		
@@ -100,27 +100,27 @@ class Parser():
 		return initmarking_parser				
 
 	@classmethod
-	def __get_newfbmsg_parser(cls):		
-		newfbmsg_parser = argparse.ArgumentParser(
+	def __get_newfd_parser(cls):		
+		newfd_parser = argparse.ArgumentParser(
 			add_help=False,
-			prog='newfbmsg'
+			prog='newfd'
 		)
-		newfbmsg_parser.add_argument(
+		newfd_parser.add_argument(
 			'alias',
 			help="The command that represents the feedback sentence"
 		)
-		newfbmsg_parser.add_argument(
+		newfd_parser.add_argument(
 			'message', 
 			help="The feedback sentence to be saved"
 		)
-		newfbmsg_parser.add_argument(
+		newfd_parser.add_argument(
 			'mark_value', 
 			type=is_integer_or_float, 
 			help="The amount of marks that should be removed when " \
 				"using this sentence"
 		)
 
-		return newfbmsg_parser
+		return newfd_parser
 
 	@classmethod
 	def __get_mkfb_parser(cls):		
