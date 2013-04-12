@@ -7,7 +7,7 @@ from database_models.feedback_message import FeedbackMessage, FBMessageAlias
 
 @commit_on_success
 def save_message(alias, message, marks_to_deduct):
-	"Stores the feedback message to the database"
+	"Stores the feedback message in the database"
 	db_session = database.session
 
 	if not FBMessageAlias.query.get(alias):

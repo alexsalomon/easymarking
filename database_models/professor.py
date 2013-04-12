@@ -8,10 +8,6 @@ class Professor(database.Base):
     name = Column(String(100), nullable=False, unique=True)
     email = Column(String(254))
 
-    @classmethod
-    def get(cls, prof_name):
-        return cls.query.filter_by(name=prof_name).first()
-
     def __init__(self, name, email=None):
         self.name = name
         self.email = email
@@ -21,3 +17,14 @@ class Professor(database.Base):
             self.id,
             self.name
         )     
+
+    @classmethod
+    def get(cls, prof_name):
+        return cls.query.filter_by(name=prof_name).first()
+
+    @classmethod
+    def contains(cls, prof_name):
+        contains = False
+        if cls.query.filter_by(prof_name=prof_name).first() is not None:
+            contains = True
+        return contains

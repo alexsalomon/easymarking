@@ -31,6 +31,13 @@ class Course(database.Base):
     def get(cls, course_id):
         return cls.query.filter_by(course_id=course_id).first()
 
+    @classmethod
+    def contains(cls, course_id):
+        contains = False
+        if cls.query.filter_by(course_id=course_id).first() is not None:
+            contains = True
+        return contains
+
     def post_assignment(self, assignment_number, maximum_marks):
         self.assignments.append(
             Assignment(self.course_id, assignment_number, maximum_marks)

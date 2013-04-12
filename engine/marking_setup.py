@@ -8,24 +8,28 @@ from database_models.course import Course
 
 @commit_on_success
 def create_course(course_id, course_name=None, prof_name=None, prof_email=None):
+	result_string = ""
+
 	professor = create_or_retrieve_professor(prof_name, prof_email)
-	if Course.get(course_id) is None:
+	if not Course.contains(course_id):
 		course = Course(course_id, course_name, professor)
-		return "Successfully created course '" + course_id + "'."
+		result_string = "Successfully created course '" + course_id + "'."
 	else:
-		return "*** Course '" + course_id + "' already exists."
+		result_string = "*** Course '" + course_id + "' already exists."
+
+	return result_string
 
 def create_or_retrieve_professor(prof_name, prof_email):
 	db_session = database.session
+	professor = None
 
 	if prof_name is not None:
 		professor = Professor.get(prof_name)
 		if professor is None:
 			professor = Professor(prof_name, prof_email)
 			db_session.flush()
-		return professor
-	else:
-		return None
+
+	return professor
 
 @commit_on_success
 def post_assignment(course_id, assignment_number, maximum_marks):
