@@ -8,6 +8,10 @@ class Professor(database.Base):
     name = Column(String(100), nullable=False, unique=True)
     email = Column(String(254))
 
+    @classmethod
+    def get(cls, prof_name):
+        return cls.query.filter_by(name=prof_name).first()
+
     def __init__(self, name, email=None):
         self.name = name
         self.email = email
@@ -17,11 +21,3 @@ class Professor(database.Base):
             self.id,
             self.name
         )     
-
-    @classmethod
-    def create(cls, prof_name, prof_email):
-        return Professor(prof_name, prof_email)
-
-    @classmethod
-    def get(cls, prof_name):
-        return cls.query.filter_by(name=prof_name).first()

@@ -8,8 +8,10 @@ class Parser():
 
 		if command == 'ccourse':
 			return cls.__get_ccourse_parser()	
+		elif command == 'postasgmnt':
+			return cls.__get_postasgmnt_parser()	
 		elif command == 'newfbmsg':
-			return cls.__get_newfbmsg_parser()		
+			return cls.__get_newfbmsg_parser()					
 		elif command == 'mkfb':
 			return cls.__get_mkfb_parser()			
 		
@@ -48,6 +50,29 @@ class Parser():
 		)
 
 		return ccourse_parser
+
+	@classmethod
+	def __get_postasgmnt_parser(cls):		
+		postasgmnt_parser = argparse.ArgumentParser(
+			add_help=False,
+			prog='postasgmnt'
+		)
+		postasgmnt_parser.add_argument(
+			'course_id',
+			help="The course id"
+		)
+		postasgmnt_parser.add_argument(
+			'assignment_number',
+			type=int,
+			help="The assignment number"
+		)
+		postasgmnt_parser.add_argument(
+			'maximum_marks',
+			type=is_integer_or_float, 
+			help="The number of marks the assignment is worth"
+		)
+
+		return postasgmnt_parser		
 
 	@classmethod
 	def __get_newfbmsg_parser(cls):		

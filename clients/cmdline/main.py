@@ -4,7 +4,7 @@ import cmd, shlex, os, subprocess
 from parser import Parser
 from engine.reports import generate_individual_student_feedback_report
 from engine.feedback_message import save_message, append_feedback
-from engine.marking_setup import create_course
+from engine.marking_setup import create_course, post_assignment
 
 class CmdlineInterface(cmd.Cmd):
 
@@ -25,6 +25,19 @@ class CmdlineInterface(cmd.Cmd):
 			)
 		except SystemExit:
 			pass
+
+	def help_ccourse(self): Parser.get_parser('postasgmnt').print_help()
+	def do_postasgmnt(self, line):
+		try:
+			parser = Parser.get_parser('postasgmnt')
+			args = parser.parse_args(shlex.split(line))
+			print post_assignment(
+				args.course_id, 
+				args.assignment_number,
+				args.maximum_marks
+			)
+		except SystemExit:
+			pass			
 
 	def help_newfbmsg(self): Parser.get_parser('newfbmsg').print_help()
 	def do_newfbmsg(self, line):

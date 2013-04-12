@@ -16,24 +16,22 @@ class Course(database.Base):
     )
     assignments = relationship("Assignment")
 
+    @classmethod
+    def get(cls, course_id):
+        return cls.query.filter_by(course_id=course_id).first()
+
     def __init__(self, course_id, course_name, professor=None):
         self.course_id = course_id
         self.name = course_name
-
-        if professor is not None:
-            self.professor.append(professor)
+        if professor is not None: 
+            self.professor = professor
 
     def __repr__(self):
         return '<Course course_id=%r>' % (
             self.course_id
         )      
 
-    @classmethod
-    def create(cls, course_id, course_name, professor):
-        course = Course(course_id, course_name)
-        course.professor = professor
-        return course
-
-    @classmethod
-    def get(cls, course_id):
-        return cls.query.filter_by(course_id=course_id).first()
+    def post_assignment(self, assignment_number, maximum_marks):
+        self.assignments.append(
+            Assignment(self.course_id, assignment_number, maximum_marks)
+        )
