@@ -44,7 +44,7 @@ def post_assignment(course_id, assignment_number, maximum_marks):
 		return "*** Course '" + course_id + "' doesn't exist."
 
 @commit_on_success
-def create_students_from_directory_names():
+def create_students_from_directory_names(email_domain):
 	curr_directory = os.getcwd()
 	directories = get_immediate_subdirectories(curr_directory)
 	students_created = []
@@ -58,7 +58,7 @@ def create_students_from_directory_names():
 	for dirname in directories:
 		student = Student.get(dirname)
 		if student is None:
-			Student(dirname)
+			Student(dirname, dirname+"@"+email_domain)
 			students_created.append(dirname)
 
 	for student_id in students_created:

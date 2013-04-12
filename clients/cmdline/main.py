@@ -45,7 +45,7 @@ class CmdlineInterface(cmd.Cmd):
 		try:
 			parser = Parser.get_parser('rcstudents')
 			args = parser.parse_args(shlex.split(line))
-			print create_students_from_directory_names()
+			print create_students_from_directory_names(args.email_domain)
 		except SystemExit:
 			pass						
 

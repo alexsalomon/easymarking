@@ -82,6 +82,12 @@ class Parser():
 			add_help=False,
 			prog='rcstudents'
 		)
+		rcstudents_parser.add_argument(
+			'email_domain',
+			help="The domain name to which the student's email address resides.\n" \
+				"Example: if 'cc.umanitoba.ca' is inserted, the user's email will be " \
+				"'dirname@cc.umanitoba.ca', where dirname is the name of the subdirectory."
+		)		
 
 		return rcstudents_parser				
 
