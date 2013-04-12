@@ -16,10 +16,6 @@ class Course(database.Base):
     )
     assignments = relationship("Assignment")
 
-    @classmethod
-    def get(cls, course_id):
-        return cls.query.filter_by(course_id=course_id).first()
-
     def __init__(self, course_id, course_name, professor=None):
         self.course_id = course_id
         self.name = course_name
@@ -30,6 +26,10 @@ class Course(database.Base):
         return '<Course course_id=%r>' % (
             self.course_id
         )      
+
+    @classmethod
+    def get(cls, course_id):
+        return cls.query.filter_by(course_id=course_id).first()
 
     def post_assignment(self, assignment_number, maximum_marks):
         self.assignments.append(

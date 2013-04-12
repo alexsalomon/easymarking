@@ -4,8 +4,8 @@ import cmd, shlex, os, subprocess
 from parser import Parser
 from engine.reports import generate_individual_student_feedback_report
 from engine.feedback_message import save_message, append_feedback
-from engine.marking_setup import create_students_from_directory_names
 from engine.marking_setup import create_course, post_assignment
+from engine.marking_setup import initiate_marking
 
 class CmdlineInterface(cmd.Cmd):
 
@@ -40,12 +40,16 @@ class CmdlineInterface(cmd.Cmd):
 		except SystemExit:
 			pass
 
-	def help_rcstudents(self): Parser.get_parser('rcstudents').print_help()
-	def do_rcstudents(self, line):
+	def help_initmarking(self): Parser.get_parser('initmarking').print_help()
+	def do_initmarking(self, line):
 		try:
-			parser = Parser.get_parser('rcstudents')
+			parser = Parser.get_parser('initmarking')
 			args = parser.parse_args(shlex.split(line))
-			print create_students_from_directory_names(args.email_domain)
+			print initiate_marking(
+				args.course_id,
+				args.assignment_number,
+				args.email_domain
+			)
 		except SystemExit:
 			pass						
 

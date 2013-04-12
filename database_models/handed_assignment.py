@@ -46,7 +46,7 @@ class HandedAssignment(database.Base):
         secondary=appended_feedback
     )
 
-    def __init__(self, student_id, course_id, number):
+    def __init__(self, student_id, course_id, assignment_number):
         self.student_id = student_id
         self.course_id = course_id
         self.assignment_number = assignment_number
@@ -57,3 +57,13 @@ class HandedAssignment(database.Base):
             self.course_id,
             self.assignment_number
         )      
+
+    @classmethod
+    def get(cls, student_id, course_id, assignment_number):
+        return cls.query.filter_by(
+            student_id=student_id,
+            course_id=course_id,
+            assignment_number=assignment_number
+        ).first()
+
+

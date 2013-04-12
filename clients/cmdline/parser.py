@@ -10,8 +10,8 @@ class Parser():
 			return cls.__get_ccourse_parser()	
 		elif command == 'postasgmnt':
 			return cls.__get_postasgmnt_parser()
-		elif command == 'rcstudents':
-			return cls.__get_rcstudents_parser()				
+		elif command == 'initmarking':
+			return cls.__get_initmarking_parser()				
 		elif command == 'newfbmsg':
 			return cls.__get_newfbmsg_parser()					
 		elif command == 'mkfb':
@@ -77,19 +77,27 @@ class Parser():
 		return postasgmnt_parser	
 
 	@classmethod
-	def __get_rcstudents_parser(cls):		
-		rcstudents_parser = argparse.ArgumentParser(
+	def __get_initmarking_parser(cls):		
+		initmarking_parser = argparse.ArgumentParser(
 			add_help=False,
-			prog='rcstudents'
+			prog='initmarking'
 		)
-		rcstudents_parser.add_argument(
+		initmarking_parser.add_argument(
+			'course_id',
+			help="Course ID"
+		)
+		initmarking_parser.add_argument(
+			'assignment_number',
+			help="Assignment number"
+		)				
+		initmarking_parser.add_argument(
 			'email_domain',
 			help="The domain name to which the student's email address resides.\n" \
 				"Example: if 'cc.umanitoba.ca' is inserted, the user's email will be " \
 				"'dirname@cc.umanitoba.ca', where dirname is the name of the subdirectory."
 		)		
 
-		return rcstudents_parser				
+		return initmarking_parser				
 
 	@classmethod
 	def __get_newfbmsg_parser(cls):		

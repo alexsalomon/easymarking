@@ -44,38 +44,76 @@ def post_assignment(course_id, assignment_number, maximum_marks):
 		return "*** Course '" + course_id + "' doesn't exist."
 
 @commit_on_success
-def create_students_from_directory_names(email_domain):
-	curr_directory = os.getcwd()
-	directories = get_immediate_subdirectories(curr_directory)
-	students_created = []
+def initiate_marking(course_id, assignment_number, email_domain):
 	result_string = ""
 
-	if len(directories) == 0:
-		result_string += "*** There are no subdirectories on the path '" + \
-			curr_directory + "'."
-		return result_string
-
-	for dirname in directories:
-		student = Student.get(dirname)
-		if student is None:
-			Student(dirname, dirname+"@"+email_domain)
-			students_created.append(dirname)
-
-	for student_id in students_created:
-		result_string += "Student '" + student_id + "' " + \
-			"was successfully created.\n"
-
-	if len(students_created) == 0:
-		result_string += "*** Already created students for all " + \
-			"the subdirectory names."
-	elif len(students_created) > 1:
-		result_string += "Created a total of " + \
-			str(len(students_created)) + " students."			
+	curr_directory = os.getcwd()
+	subdirectory_names = get_immediate_subdirectories(curr_directory)	
+	result_string += add_students_based_on_subdirectory_name_if_needed(subdirectory_names, email_domain)
+	result_string += enrol_students_on_course_if_needed(subdirectory_names, course_id)
+	result_string += create_handed_assignment_for_each_student(subdirectory_names, course_id, assignment_number)
 
 	return result_string
 
 def get_immediate_subdirectories(dir):
     return [filename for filename in os.listdir(dir)
             if os.path.isdir(os.path.join(dir, filename))]
+
+def add_students_based_on_subdirectory_name_if_needed(subdirectory_names, email_domain):
+	students_created = []
+	result_string = ""
+
+	for dirname in subdirectory_names:
+		if not Student.contains(dirname):
+			Student(dirname, dirname+"@"+email_domain)
+			students_created.append(dirname)
+			result_string += "Student '" + student_id + "' " + \
+				"was successfully created.\n"
+
+	if len(subdirectory_names) == 0:
+		result_string += "*** There are no subdirectories on the path '" + \
+			curr_directory + "'.\n"
+	elif len(students_created) == 0:
+		result_string += "*** Did not need to create students for any of " + \
+			"the subdirectory names since they already exist.\n"
+	elif len(students_created) > 1:
+		result_string += "Created a total of " + \
+			str(len(students_created)) + " students.\n"			
+
+	return result_string
+
+def enrol_students_on_course_if_needed(subdirectory_names, course_id):
+	result_string = ""
+
+	for student_id in subdirectory_names:
+		if not Student.is_enrolled(student_id, course_id):
+			Student.enroll(student_id, course_id)
+			result_string += "Successfully enrolled student '" + student_id + \
+				"' in the course '" + course_id + "'.\n"
+
+	return result_string
+
+def create_handed_assignment_for_each_student(subdirectory_names, course_id, assignment_number):
+	result_string = ""
+	handed_assignments_count = 0
+
+	for student_id in subdirectory_names:
+		if not Student.has_handed_assignment_for_course(
+			student_id, 
+			course_id, 
+			assignment_number
+		):
+			Student.create_handed_assignment(
+				student_id, 
+				course_id, 
+				assignment_number
+			)
+			handed_assignments_count = handed_assignments_count + 1
+
+	result_string += "A total of '" + str(handed_assignments_count) + \
+		"' students have handed in their assignment."
+
+	return result_string	
+
 
 
