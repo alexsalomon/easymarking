@@ -62,10 +62,10 @@ class CmdlineInterface(cmd.Cmd):
 		except SystemExit:
 			pass
 
-	def help_mkfb(self): Parser.get_parser('mkfb').print_help()
-	def do_mkfb(self, line):
+	def help_fd(self): Parser.get_parser('fd').print_help()
+	def do_fd(self, line):
 		try:
-			parser = Parser.get_parser('mkfb')
+			parser = Parser.get_parser('fd')
 			args = parser.parse_args(shlex.split(line))
 			print append_feedback(
 				args.alias, 
@@ -77,7 +77,7 @@ class CmdlineInterface(cmd.Cmd):
 		except SystemExit:
 			pass
 
-	#def help_sturep(self): Parser.get_parser('mkfb').print_help()
+	#def help_sturep(self): Parser.get_parser('fd').print_help()
 	def do_sturep(self, line):
 		generate_individual_student_feedback_report('umkonkin', "COMP 4350", 1)
 

@@ -14,8 +14,8 @@ class Parser():
 			return cls.__get_initmarking_parser()				
 		elif command == 'newfd':
 			return cls.__get_newfd_parser()					
-		elif command == 'mkfb':
-			return cls.__get_mkfb_parser()			
+		elif command == 'fd':
+			return cls.__get_fd_parser()			
 		
 		return parser
 
@@ -123,21 +123,21 @@ class Parser():
 		return newfd_parser
 
 	@classmethod
-	def __get_mkfb_parser(cls):		
-		mkfb_parser = argparse.ArgumentParser(
+	def __get_fd_parser(cls):		
+		fd_parser = argparse.ArgumentParser(
 			add_help=False,
-			prog='mkfb'
+			prog='fd'
 		)
-		mkfb_parser.add_argument(
+		fd_parser.add_argument(
 			'alias', 
 			help="Feedback message alias"
 		)
-		mkfb_parser.add_argument(
+		fd_parser.add_argument(
 			'student_id',
 			help="Student's school unique identifier"
 		)
 		
-		return mkfb_parser		
+		return fd_parser		
 
 def is_integer_or_float(string):
 	try:
