@@ -41,6 +41,7 @@ def append_feedback(alias, student_id):
 	)	
 
 	if not has_feedback_message_being_previously_appended(feedback_message, handed_assignment):
+		handed_assignment.marks_achieved -= feedback_message.marks_to_deduct
 		handed_assignment.append_feedback_message(feedback_message)
 		result_string = "Feedback message successfully appended."
 	else:

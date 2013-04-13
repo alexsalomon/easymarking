@@ -2,16 +2,16 @@
 
 import cmd, shlex, os, subprocess
 from parser import Parser
-from engine.reports import generate_individual_student_feedback_report
+from engine.reports import generate_all_individual_student_fd_reports_for_assignment
 from engine.feedback_message import save_message, append_feedback
-from engine.marking_setup import create_course, post_assignment
-from engine.marking_setup import initiate_marking
-from engine.dir_navigation import navigate_to_next_directory, navigate_to_prev_directory
+from engine.marking_setup import create_course, post_assignment, initiate_marking
+from engine.dir_navigation import navigate_to_next_directory, navigate_to_prev_directory, change_directory
 
 class CmdlineInterface(cmd.Cmd):
 
 	intro = 'EasyMarking v1.0 - Type "help" for help.\n' \
 		'Good marking! :)\n'
+	base_prompt = "easyMarker=# "
 	prompt = "easyMarker=# "
 
 	def help_ccourse(self): Parser.get_parser('ccourse').print_help()
@@ -75,14 +75,22 @@ class CmdlineInterface(cmd.Cmd):
 		except SystemExit:
 			pass
 
-	#def help_sturep(self): Parser.get_parser('fd').print_help()
-	def do_sturep(self, line):
-		generate_individual_student_feedback_report('umkonkin', "COMP 4350", 1)
+	def help_gensrep(self): Parser.get_parser('gensrep').print_help()
+	def do_gensrep(self, line):
+		try:
+			parser = Parser.get_parser('gensrep')
+			args = parser.parse_args(shlex.split(line))
+			generate_all_individual_student_fd_reports_for_assignment(
+				args.course_id, 
+				args.assignment_number
+			)
+		except SystemExit:
+			pass
 
 	def do_cd(self, line):
 		try:
 			line = os.path.expanduser(line)
-			os.chdir(line)
+			change_directory(line)
 		except OSError as e:
 			print "cd: " + e.filename + ": " + e.strerror
 

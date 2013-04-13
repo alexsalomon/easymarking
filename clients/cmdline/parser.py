@@ -16,6 +16,8 @@ class Parser():
 			return cls.__get_newfd_parser()					
 		elif command == 'fd':
 			return cls.__get_fd_parser()	
+		elif command == 'gensrep':
+			return cls.__get_gensrep_parser()				
 		elif command == 'nextdir':
 			return cls.__get_nextdir_parser()	
 		elif command == 'prevdir':
@@ -146,6 +148,30 @@ class Parser():
 		)
 		
 		return fd_parser	
+
+	@classmethod
+	def __get_gensrep_parser(cls):		
+		gensrep_parser = argparse.ArgumentParser(
+			add_help=False,
+			prog='gensrep'
+		)
+		gensrep_parser.add_argument(
+			'-c',
+			dest='course_id',
+			action='store',
+			default=None,
+	        help="The course id"
+		)
+		gensrep_parser.add_argument(
+			'-a',
+			dest='assignment_number',
+			action='store',
+			default=None,
+			type=int,			
+	        help="The assignment number"
+		)
+
+		return gensrep_parser
 
 	@classmethod
 	def __get_nextdir_parser(cls):		

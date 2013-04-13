@@ -66,6 +66,13 @@ class HandedAssignment(database.Base):
             assignment_number=assignment_number
         ).first()
 
+    @classmethod
+    def get_all(cls, course_id, assignment_number):
+        return cls.query.filter_by(
+            course_id=course_id,
+            assignment_number=assignment_number
+        ).all()        
+
     def append_feedback_message(self, feedback_message):
         self.feedback_messages.append(feedback_message)
 

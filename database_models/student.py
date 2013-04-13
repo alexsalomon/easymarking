@@ -2,6 +2,7 @@ import database
 from sqlalchemy import Column, Table, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship, backref
 from database_models.course import Course
+from database_models.assignment import Assignment
 from database_models.handed_assignment import HandedAssignment
 
 enrolled = Table(
@@ -69,10 +70,12 @@ class Student(database.Base):
     @classmethod
     def create_handed_assignment(cls, student_id, course_id, assignment_number):
         student = cls.get(student_id)
+        assignment = Assignment.get(course_id, assignment_number)
         handed_assignment = HandedAssignment(
             student_id,
             course_id, 
             assignment_number
         )     
+        handed_assignment.marks_achieved = assignment.maximum_marks
         student.handed_assignments.append(handed_assignment)  
 

@@ -5,6 +5,8 @@
 *.swp
 *~
 ._*
+/bin/reports
+
 *.DS_Store
 build/
 *.pbxuser
