@@ -1,8 +1,11 @@
+import os, os.path
 from database_models import database
 from database_models.transaction import commit_on_success
 from database_models.course import Course
 from database_models.student import Student
 from database_models.assignment import Assignment
+from database_models.handed_assignment import HandedAssignment
+from database_models.system_configuration import SystemConfiguration
 from database_models.feedback_message import FeedbackMessage, FBMessageAlias
 
 @commit_on_success
@@ -25,88 +28,39 @@ def save_message(alias, message, marks_to_deduct):
 	return result_string
 
 @commit_on_success
-def append_feedback(
-	alias, 
-	student_id, 
-	course_id, 
-	assignment_number, 
-	maximum_marks
-):
+def append_feedback(alias, student_id):
 	"Uses a pre-defined feedback message to provide feedback to a student"
-	db_session = database.session
+	result_string = ""
 
-	_create_student_if_doesnt_already_exist(student_id)
-	_create_course_to_existing_student_if_not_previoulsy_created(student_id, course_id)
-	assignment =  _create_assignment_to_existing_student_if_not_previoulsy_created(
+	student_id = get_student_id_from_curr_dir_if_not_prev_specified(student_id)
+	feedback_message = FeedbackMessage.get(alias)
+	handed_assignment = HandedAssignment.get(
 		student_id,
-		course_id, 
-		assignment_number,
-		maximum_marks
-	)
+		SystemConfiguration.get_setting("working_course_id"),
+		SystemConfiguration.get_setting("working_assignment_number")
+	)	
 
-	feedback_message = FeedbackMessage.query.join(
-		FBMessageAlias
-	).filter_by(
-		alias=alias
-	).first()
-
-	if feedback_message is not None and feedback_message not in assignment.feedback_messages:
-		assignment.feedback_messages.append(feedback_message)
-		return "Feedback message successfully appended."
+	if not has_feedback_message_being_previously_appended(feedback_message, handed_assignment):
+		handed_assignment.append_feedback_message(feedback_message)
+		result_string = "Feedback message successfully appended."
 	else:
-		return "*** Alias doesn't exist. Use the newfbmsg command to " \
-			"create a feedback message."
+		result_string = "*** Alias doesn't exist. Use the newfbmsg " \
+			"command to create a feedback message."
 
-def _create_student_if_doesnt_already_exist(student_id):
-	db_session = database.session
-	student = Student.query.filter_by(student_id=student_id).first()
+	return result_string
 
-	if student is None:
-		student = Student(student_id)
-		db_session.add(student)
-		db_session.flush()
+def get_student_id_from_curr_dir_if_not_prev_specified(student_id):
+	if student_id is None:
+		student_id = os.path.basename(os.getcwd())	
+	return student_id
 
-	return student
-
-def _create_course_to_existing_student_if_not_previoulsy_created(
-	student_id,
-	course_id
+def has_feedback_message_being_previously_appended(
+	feedback_message, 
+	handed_assignment
 ):
-	db_session = database.session
-	course = Course.query.filter_by(course_id=course_id).first()
+	previously_appended = False
+	if feedback_message in handed_assignment.feedback_messages:
+		previously_appended = True
+	return previously_appended
 
-	if course is None:
-		student = Student.query.filter_by(student_id=student_id).first()
-		course = Course(course_id, "COURSE NAME HARDCODED")
-		student.courses.append(course)	
-		db_session.add( student )
-		db_session.flush()
 
-	return course	
-
-def _create_assignment_to_existing_student_if_not_previoulsy_created(
-	student_id,
-	course_id, 
-	assignment_number,
-	maximum_marks
-):
-	db_session = database.session
-	assignment = Assignment.query.filter_by(
-		student_id=student_id,
-		course_id=course_id,
-		number=assignment_number
-	).first()
-
-	if assignment is None:
-		course = Course.query.filter_by(course_id=course_id).first()
-		assignment = Assignment(
-			student_id,
-			course_id,
-			assignment_number,
-			maximum_marks
-		)
-		course.assignments.append(assignment)	
-		db_session.add( course )
-		db_session.flush()
-
-	return assignment

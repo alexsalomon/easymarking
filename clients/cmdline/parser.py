@@ -132,9 +132,13 @@ class Parser():
 			'alias', 
 			help="Feedback message alias"
 		)
+
 		fd_parser.add_argument(
-			'student_id',
-			help="Student's school unique identifier"
+			'-s',
+			dest='student_id',
+			action='store',
+			default=None,
+	        help="Student's school unique identifier"
 		)
 		
 		return fd_parser		

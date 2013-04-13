@@ -66,4 +66,6 @@ class HandedAssignment(database.Base):
             assignment_number=assignment_number
         ).first()
 
+    def append_feedback_message(self, feedback_message):
+        self.feedback_messages.append(feedback_message)
 

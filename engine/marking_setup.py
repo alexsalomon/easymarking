@@ -1,5 +1,6 @@
 import os, os.path
 from database_models import database
+from database_models.system_configuration import SystemConfiguration
 from database_models.transaction import commit_on_success
 from database_models.assignment import Assignment
 from database_models.professor import Professor
@@ -54,8 +55,10 @@ def initiate_marking(course_id, assignment_number, email_domain):
 	curr_directory = os.getcwd()
 	subdirectory_names = get_immediate_subdirectories(curr_directory)	
 	result_string += add_students_based_on_subdirectory_name_if_needed(subdirectory_names, email_domain)
-	result_string += enrol_students_on_course_if_needed(subdirectory_names, course_id)
+	result_string += enroll_students_on_course_if_needed(subdirectory_names, course_id)
 	result_string += create_handed_assignment_for_each_student(subdirectory_names, course_id, assignment_number)
+	SystemConfiguration.set_setting("working_course_id", course_id)
+	SystemConfiguration.set_setting("working_assignment_number", assignment_number)
 
 	return result_string
 
@@ -64,6 +67,7 @@ def get_immediate_subdirectories(dir):
             if os.path.isdir(os.path.join(dir, filename))]
 
 def add_students_based_on_subdirectory_name_if_needed(subdirectory_names, email_domain):
+	db_session = database.session
 	students_created = []
 	result_string = ""
 
@@ -71,7 +75,7 @@ def add_students_based_on_subdirectory_name_if_needed(subdirectory_names, email_
 		if not Student.contains(dirname):
 			Student(dirname, dirname+"@"+email_domain)
 			students_created.append(dirname)
-			result_string += "Student '" + student_id + "' " + \
+			result_string += "Student '" + dirname + "' " + \
 				"was successfully created.\n"
 
 	if len(subdirectory_names) == 0:
@@ -84,9 +88,12 @@ def add_students_based_on_subdirectory_name_if_needed(subdirectory_names, email_
 		result_string += "Created a total of " + \
 			str(len(students_created)) + " students.\n"			
 
+	db_session.flush()
+
 	return result_string
 
-def enrol_students_on_course_if_needed(subdirectory_names, course_id):
+def enroll_students_on_course_if_needed(subdirectory_names, course_id):
+	db_session = database.session
 	result_string = ""
 
 	for student_id in subdirectory_names:
@@ -95,9 +102,12 @@ def enrol_students_on_course_if_needed(subdirectory_names, course_id):
 			result_string += "Successfully enrolled student '" + student_id + \
 				"' in the course '" + course_id + "'.\n"
 
+	db_session.flush()
+
 	return result_string
 
 def create_handed_assignment_for_each_student(subdirectory_names, course_id, assignment_number):
+	db_session = database.session
 	result_string = ""
 	handed_assignments_count = 0
 
@@ -117,7 +127,6 @@ def create_handed_assignment_for_each_student(subdirectory_names, course_id, ass
 	result_string += "A total of '" + str(handed_assignments_count) + \
 		"' students have handed in their assignment."
 
+	db_session.flush()
+
 	return result_string	
-
-
-

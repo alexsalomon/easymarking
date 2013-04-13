@@ -26,6 +26,15 @@ class FeedbackMessage(database.Base):
         )      
 
     @staticmethod
+    def get(alias):
+        feedback_message = FeedbackMessage.query.join(
+            FBMessageAlias
+        ).filter_by(
+            alias=alias
+        ).first()
+        return feedback_message
+
+    @staticmethod
     def contains(alias):
         contains = False
         if FBMessageAlias.query.filter_by(alias=alias).first() is not None:
