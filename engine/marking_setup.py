@@ -1,4 +1,5 @@
-import os, os.path
+import os
+from engine.dir_navigation import get_immediate_subdirectories
 from database_models import database
 from database_models.system_configuration import SystemConfiguration
 from database_models.transaction import commit_on_success
@@ -61,10 +62,6 @@ def initiate_marking(course_id, assignment_number, email_domain):
 	SystemConfiguration.set_setting("working_assignment_number", assignment_number)
 
 	return result_string
-
-def get_immediate_subdirectories(dir):
-    return [filename for filename in os.listdir(dir)
-            if os.path.isdir(os.path.join(dir, filename))]
 
 def add_students_based_on_subdirectory_name_if_needed(subdirectory_names, email_domain):
 	db_session = database.session

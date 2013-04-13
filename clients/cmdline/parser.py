@@ -15,7 +15,11 @@ class Parser():
 		elif command == 'newfd':
 			return cls.__get_newfd_parser()					
 		elif command == 'fd':
-			return cls.__get_fd_parser()			
+			return cls.__get_fd_parser()	
+		elif command == 'nextdir':
+			return cls.__get_nextdir_parser()	
+		elif command == 'prevdir':
+			return cls.__get_prevdir_parser()									
 		
 		return parser
 
@@ -141,7 +145,25 @@ class Parser():
 	        help="Student's school unique identifier"
 		)
 		
-		return fd_parser		
+		return fd_parser	
+
+	@classmethod
+	def __get_nextdir_parser(cls):		
+		nextdir_parser = argparse.ArgumentParser(
+			add_help=False,
+			prog='nextdir'
+		)
+		
+		return nextdir_parser	
+
+	@classmethod
+	def __get_prevdir_parser(cls):		
+		prevdir_parser = argparse.ArgumentParser(
+			add_help=False,
+			prog='prevdir'
+		)
+		
+		return prevdir_parser						
 
 def is_integer_or_float(string):
 	try:

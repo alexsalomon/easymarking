@@ -6,6 +6,7 @@ from engine.reports import generate_individual_student_feedback_report
 from engine.feedback_message import save_message, append_feedback
 from engine.marking_setup import create_course, post_assignment
 from engine.marking_setup import initiate_marking
+from engine.dir_navigation import navigate_to_next_directory, navigate_to_prev_directory
 
 class CmdlineInterface(cmd.Cmd):
 
@@ -80,23 +81,34 @@ class CmdlineInterface(cmd.Cmd):
 
 	def do_cd(self, line):
 		try:
-			# if line.startswith("~"): 
-			# 	line = line.replace("~", os.path.expanduser('~'), 1)
 			line = os.path.expanduser(line)
-
 			os.chdir(line)
 		except OSError as e:
 			print "cd: " + e.filename + ": " + e.strerror
 
+	def help_nextdir(self): Parser.get_parser('nextdir').print_help()
+	def do_next(self, line): return self.do_nextdir(line)
+	def do_nextdir(self, line):
+		try:
+			parser = Parser.get_parser('nextdir')
+			args = parser.parse_args(shlex.split(line))
+			print navigate_to_next_directory()
+		except SystemExit:
+			pass	
+
+	def help_prevdir(self): Parser.get_parser('prevdir').print_help()
+	def do_prev(self, line): return self.do_prevdir(line)
+	def do_prevdir(self, line):
+		try:
+			parser = Parser.get_parser('prevdir')
+			args = parser.parse_args(shlex.split(line))
+			print navigate_to_prev_directory()
+		except SystemExit:
+			pass					
+
 	def default(self, line):
 		subprocess.call(line, shell=True)
 
-	def do_exit(self, line):
-		return True;		
-
-	def do_quit(self, line):
-		return True;
-
-	def do_EOF(self, line):
-		print "\n"
-		return True	
+	def do_EOF(self, line): print ""; return self.do_exit(line)
+	def do_quit(self, line): return self.do_exit(line)
+	def do_exit(self, line): return True
