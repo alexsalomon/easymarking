@@ -16,12 +16,16 @@ class Report():
 	def set_assignment(self, assignment):
 		self.assignment = assignment	
 
-	def get_assignment_path(self, course_id, assignment_number):
+	def get_course_path(self, course_id):
 		project_dir = os.getcwd()
-		reports_dir = project_dir+'/bin/reports/'
+		reports_dir = project_dir+'/bin/Reports/'
 		course_dir = reports_dir+course_id+'/'
+		return course_dir
+
+	def get_assignment_path(self, course_id, assignment_number):
+		course_dir = get_course_path(course_id)
 		assignment_dir = course_dir+'A'+str(assignment_number)+'/'
-		return assignment_dir
+		return assignment_dir		
 
 	def open_report_file_for_write(self, file_path):
 		self.create_path_if_non_existent(file_path)

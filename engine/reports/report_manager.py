@@ -1,6 +1,7 @@
 from engine.reports.feedback_reports import StudentFeedbackReport
 from engine.reports.feedback_reports import AssignmentFeedbackReport
 from engine.reports.grade_reports import TxtAssignmentGradesReport
+from engine.reports.grade_reports import XlsCourseGradesReport
 
 class ReportManager():
 	""" ReportManager manages reports by creating a Report
@@ -13,3 +14,5 @@ class ReportManager():
 			return AssignmentFeedbackReport()	
 		if report_name == "assignment_grades_txt":
 			return TxtAssignmentGradesReport()	
+		if report_name == "course_grades_xls":
+			return XlsCourseGradesReport()				

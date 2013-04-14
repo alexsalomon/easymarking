@@ -53,7 +53,7 @@ def generate_overall_feedback_report_for_assignment(
 			assignment_number + "' was successfully generated."
 	except:
 		print "*** Feedback report for assignment '" + course_id + " - A" + \
-			assignment_number + "'could not be generated."
+			assignment_number + "' could not be generated."
 
 def generate_grades_report_for_assignment(
 	course_id, 
@@ -76,5 +76,28 @@ def generate_grades_report_for_assignment(
 			assignment_number + "' was successfully generated."
 	except:
 		print "*** Grades report for assignment '" + course_id + " - A" + \
-			assignment_number + "'could not be generated."					
+			assignment_number + "' could not be generated."	
+
+def generate_xls_grades_report_for_course(
+	course_id, 
+	assignment_number
+):	
+	if course_id is None:
+		course_id = SystemConfiguration.get_setting("working_course_id")
+
+	if assignment_number is None:
+		assignment_number = SystemConfiguration.get_setting(
+			"working_assignment_number"
+		)
+
+	# try:
+	report_manager = ReportManager()
+	report_obj = report_manager.get_report("course_grades_xls")
+	report_obj.set_assignment(Assignment.get(course_id, assignment_number))
+	report_obj.generate()
+	print "Grades report for course '" + course_id + \
+		"' was successfully generated."
+	# except:
+	# 	print "*** Grades report for course '" + course_id + \
+	# 		"' could not be generated."								
 

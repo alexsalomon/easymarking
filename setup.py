@@ -1,3 +1,4 @@
 decorator
 nosetest
 mock
+xlwt
