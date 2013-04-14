@@ -52,17 +52,34 @@ def generate_overall_feedback_report_for_assignment(
 		report_obj = report_manager.get_report("assignment_feedback")
 		report_obj.set_assignment(Assignment.get(course_id, assignment_number))
 		report_obj.generate()
-		print "Report for assignment '" + course_id + " - A" + \
+		print "Feedback report for assignment '" + course_id + " - A" + \
 			assignment_number + "' was successfully generated."
 	except:
-		print "*** Report for assignment '" + course_id + " - A" + \
+		print "*** Feedback report for assignment '" + course_id + " - A" + \
 			assignment_number + "'could not be generated."
 
 def generate_grades_report_for_assignment(
 	course_id, 
 	assignment_number
 ):	
+	if course_id is None:
+		course_id = SystemConfiguration.get_setting("working_course_id")
 
+	if assignment_number is None:
+		assignment_number = SystemConfiguration.get_setting(
+			"working_assignment_number"
+		)
+
+	try:
+		report_manager = ReportManager()
+		report_obj = report_manager.get_report("assignment_grades_txt")
+		report_obj.set_assignment(Assignment.get(course_id, assignment_number))
+		report_obj.generate()
+		print "Grades report for assignment '" + course_id + " - A" + \
+			assignment_number + "' was successfully generated."
+	except:
+		print "*** Grades report for assignment '" + course_id + " - A" + \
+			assignment_number + "'could not be generated."
 
 class ReportManager():
 	""" ReportManager manages reports by creating a Report
@@ -72,7 +89,9 @@ class ReportManager():
 		if report_name == "individual_student_feedback":
 			return StudentFeedbackReport()
 		if report_name == "assignment_feedback":
-			return AssignmentFeedbackReport()			
+			return AssignmentFeedbackReport()	
+		if report_name == "assignment_grades_txt":
+			return TxtAssignmentGradesReport()						
 
 class Report():
 	__metaclass__ = abc.ABCMeta
@@ -224,4 +243,56 @@ class StudentFeedbackReport(FeedbackReport):
 			"/" + str(assignment.maximum_marks) + "]" + "\n\nFeedback:\n"
 		)
 
+class TxtAssignmentGradesReport(Report):
+
+	def __repr__(self):
+		return '<TxtGradesReport assignment=%r>' % (
+			self.assignment
+		)
+
+	def generate(self):
+		report_file_path = self.get_report_file_path(
+			self.assignment.course_id, 
+			self.assignment.number
+		)
+		report_file = self.open_report_file_for_write(report_file_path)
+		handed_assignments = HandedAssignment.get_all(
+			self.assignment.course_id, 
+			self.assignment.number
+		)		
+
+		self.write_file_header(self.assignment, report_file)
+
+		for handed_assignment in handed_assignments:
+			self.write_student_header_to_file(handed_assignment, report_file)
+
+		report_file.close()	
+
+	def get_report_file_path(self, course_id, assignment_number):
+		assignment_dir = self.get_assignment_path(course_id, assignment_number)
+		file_dir = assignment_dir+'Grades/'
+		file_path = file_dir+'A'+str(self.assignment.number)+'_grades.txt'
+		return file_path
+
+	def write_file_header(self, assignment, report_file):
+		header = "------------------------------------ Class Grades "
+		header += "------------------------------------\n"
+		header += "Course: " + self.assignment.course_id + "\n"
+		header += "Assignment: " + str(self.assignment.number) + "\n"
+		header += "Total Marks: " + str(self.assignment.maximum_marks) + "\n"
+		header += "--------------------------------------------------"
+		header += "------------------------------------\n\n"
+		header += "Student Name\t|\tGrade\n"
+		header += "-------------------------------\n"
+		report_file.write(header)
+
+	def write_student_header_to_file(self, handed_assignment, report_file):
+		if len(handed_assignment.student_id) > 7:
+			number_of_tabs = "\t"
+		else:
+			number_of_tabs = "\t\t"
+
+		header = handed_assignment.student_id + number_of_tabs + "|\t" + \
+			str(handed_assignment.marks_achieved) + "\n"
+		report_file.write(header)
 

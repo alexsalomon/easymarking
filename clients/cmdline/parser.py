@@ -17,13 +17,15 @@ class Parser():
 		elif command == 'fd':
 			return cls.__get_fd_parser()	
 		elif command == 'gensrep':
-			return cls.__get_gensrep_parser()				
+			return cls.__get_gensrep_parser()
 		elif command == 'genfrep':
-			return cls.__get_genfrep_parser()							
+			return cls.__get_genfrep_parser()
+		elif command == 'gengrep':
+			return cls.__get_gengrep_parser()
 		elif command == 'nextdir':
-			return cls.__get_nextdir_parser()	
+			return cls.__get_nextdir_parser()
 		elif command == 'prevdir':
-			return cls.__get_prevdir_parser()									
+			return cls.__get_prevdir_parser()
 		
 		return parser
 
