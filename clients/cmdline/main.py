@@ -2,7 +2,7 @@
 
 import cmd, shlex, os, subprocess
 from parser import Parser
-from engine import reports
+from engine.reports import reports_api
 from engine.feedback_message import save_message, append_feedback
 from engine.marking_setup import create_course, post_assignment, initiate_marking
 from engine.dir_navigation import navigate_to_next_directory, navigate_to_prev_directory, change_directory
@@ -80,7 +80,7 @@ class CmdlineInterface(cmd.Cmd):
 		try:
 			parser = Parser.get_parser('gensrep')
 			args = parser.parse_args(shlex.split(line))
-			reports.generate_all_individual_student_fd_reports_for_assignment(
+			reports_api.generate_all_individual_student_fd_reports_for_assignment(
 				args.course_id, 
 				args.assignment_number
 			)
@@ -92,7 +92,7 @@ class CmdlineInterface(cmd.Cmd):
 		try:
 			parser = Parser.get_parser('genfrep')
 			args = parser.parse_args(shlex.split(line))
-			reports.generate_overall_feedback_report_for_assignment(
+			reports_api.generate_overall_feedback_report_for_assignment(
 				args.course_id, 
 				args.assignment_number
 			)
@@ -104,7 +104,27 @@ class CmdlineInterface(cmd.Cmd):
 		try:
 			parser = Parser.get_parser('gengrep')
 			args = parser.parse_args(shlex.split(line))
-			reports.generate_grades_report_for_assignment(
+			reports_api.generate_grades_report_for_assignment(
+				args.course_id, 
+				args.assignment_number
+			)
+		except SystemExit:
+			pass
+
+	def help_genareps(self): Parser.get_parser('genareps').print_help()
+	def do_genareps(self, line):
+		try:
+			parser = Parser.get_parser('genareps')
+			args = parser.parse_args(shlex.split(line))
+			reports_api.generate_all_individual_student_fd_reports_for_assignment(
+				args.course_id, 
+				args.assignment_number
+			)			
+			reports_api.generate_overall_feedback_report_for_assignment(
+				args.course_id, 
+				args.assignment_number
+			)			
+			reports_api.generate_grades_report_for_assignment(
 				args.course_id, 
 				args.assignment_number
 			)
