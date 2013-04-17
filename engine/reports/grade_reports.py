@@ -1,6 +1,7 @@
 from xlwt import Workbook, easyxf
 
 from database_models.handed_assignment import HandedAssignment
+from database_models.student import Student
 from database_models.course import Course
 from engine.reports.report import Report
 
@@ -59,8 +60,9 @@ class TxtAssignmentGradesReport(Report):
 
 class XlsCourseGradesReport(Report):
 
-	student_id_column = 0
-	first_assignment_column = 1
+	student_id_column_name = 'Student ID'
+	student_id_column_index = 0
+	first_assignment_column_index = 1
 
 	def __repr__(self):
 		return '<XlsCourseGradesReport assignment=%r>' % (
@@ -98,9 +100,10 @@ class XlsCourseGradesReport(Report):
  			'font: name Calibri, bold on, height 240;'
  			'align: vertical center, horizontal center;'
  		)		
-		sheet.write(0, self.student_id_column, 'Student ID', format)
-		column = self.first_assignment_column
-
+		sheet.write(0, 0, self.student_id_column_name, format)
+		sheet.col(0).width = 256*(Student.get_longest_studenid()+2)
+		
+		column = self.first_assignment_column_index
 		for assignment in course.assignments:
 			sheet.write(0, column, 'A'+str(assignment.number), format)
 			column += 1
@@ -109,16 +112,16 @@ class XlsCourseGradesReport(Report):
 		student_id = student.student_id
 		format = easyxf(
  			'font: name Calibri, height 240;'
- 			'align: vertical center, horizontal center;'
+ 			'align: vertical center, horizontal center, wrap on;'
  		)			
-		row.write(self.student_id_column, student_id, format)
+		row.write(self.student_id_column_index, student_id, format)
 
 	def write_student_grades_to_xls(self, row, student, course):
 		format = easyxf(
  			'font: name Calibri, height 240;'
- 			'align: vertical center, horizontal center;'
+ 			'align: vertical center, horizontal center, wrap on;'
  		)	
-		column = self.first_assignment_column
+		column = self.first_assignment_column_index
 
 		for assignment in course.assignments:
 			handed_assignment = HandedAssignment.get(

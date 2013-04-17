@@ -46,6 +46,12 @@ class CmdlineInterface(cmd.Cmd):
 		try:
 			parser = Parser.get_parser('initmarking')
 			args = parser.parse_args(shlex.split(line))
+			print create_course(args.course_id)			
+			print post_assignment(
+				args.course_id, 
+				args.assignment_number,
+				args.maximum_marks
+			)
 			print initiate_marking(
 				args.course_id,
 				args.assignment_number,

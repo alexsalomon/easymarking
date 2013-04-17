@@ -42,7 +42,7 @@ def post_assignment(course_id, assignment_number, maximum_marks):
 			course.post_assignment(assignment_number, maximum_marks)
 			return "Successfully posted Assignment number '" + \
 				str(assignment_number) + "' for course '" + \
-				course_id + "."
+				course_id + "'."
 		else:
 			return "*** Assignment number '" + str(assignment_number) + \
 				"' for course '" + course_id + "' already exist."

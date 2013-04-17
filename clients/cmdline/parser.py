@@ -103,7 +103,11 @@ class Parser():
 		initmarking_parser.add_argument(
 			'assignment_number',
 			help="Assignment number"
-		)				
+		)		
+		initmarking_parser.add_argument(
+			'maximum_marks',
+			help="Maximum marks"
+		)						
 		initmarking_parser.add_argument(
 			'email_domain',
 			help="The domain name to which the student's email address resides.\n" \

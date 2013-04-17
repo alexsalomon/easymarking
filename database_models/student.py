@@ -1,5 +1,5 @@
 import database
-from sqlalchemy import Column, Table, Integer, String, ForeignKey
+from sqlalchemy import Column, Table, Integer, String, ForeignKey, func
 from sqlalchemy.orm import relationship, backref
 from database_models.course import Course
 from database_models.assignment import Assignment
@@ -78,4 +78,20 @@ class Student(database.Base):
         )     
         handed_assignment.marks_achieved = assignment.maximum_marks
         student.handed_assignments.append(handed_assignment)  
+
+    @classmethod
+    def get_longest_studenid(cls):
+        db_session = database.session
+        return db_session.query(
+            func.max(func.length(Student.student_id))
+        ).scalar()
+
+    #     session = database.session
+    #     longest_length = session.execute(
+    #         'SELECT LENGTH(:field), COUNT(*) ' + \
+    #         'FROM :table GROUP BY LENGTH(field_to_query);',
+    #         field='student_id',
+    #         table='students'
+    #     )
+
 
