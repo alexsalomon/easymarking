@@ -24,8 +24,8 @@ class Parser():
 			return cls.__get_genagrep_parser()
 		elif command == 'gencgrep':
 			return cls.__get_gencgrep_parser()			
-		elif command == 'genareps':
-			return cls.__get_genareps_parser()			
+		elif command == 'genallreps':
+			return cls.__get_genallreps_parser()			
 		elif command == 'nextdir':
 			return cls.__get_nextdir_parser()
 		elif command == 'prevdir':
@@ -258,19 +258,19 @@ class Parser():
 		return gencgrep_parser						
 
 	@classmethod
-	def __get_genareps_parser(cls):		
-		genareps_parser = argparse.ArgumentParser(
+	def __get_genallreps_parser(cls):		
+		genallreps_parser = argparse.ArgumentParser(
 			add_help=False,
-			prog='genareps'
+			prog='genallreps'
 		)
-		genareps_parser.add_argument(
+		genallreps_parser.add_argument(
 			'-c',
 			dest='course_id',
 			action='store',
 			default=None,
 	        help="The course id"
 		)
-		genareps_parser.add_argument(
+		genallreps_parser.add_argument(
 			'-a',
 			dest='assignment_number',
 			action='store',
@@ -279,7 +279,7 @@ class Parser():
 	        help="The assignment number"
 		)
 
-		return genareps_parser	
+		return genallreps_parser	
 
 	@classmethod
 	def __get_nextdir_parser(cls):		

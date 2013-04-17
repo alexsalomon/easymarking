@@ -129,10 +129,10 @@ class CmdlineInterface(cmd.Cmd):
 		except SystemExit:
 			pass			
 
-	def help_genareps(self): Parser.get_parser('genareps').print_help()
-	def do_genareps(self, line):
+	def help_genallreps(self): Parser.get_parser('genallreps').print_help()
+	def do_genallreps(self, line):
 		try:
-			parser = Parser.get_parser('genareps')
+			parser = Parser.get_parser('genallreps')
 			args = parser.parse_args(shlex.split(line))
 			reports_api.generate_all_individual_student_fd_reports_for_assignment(
 				args.course_id, 
@@ -146,6 +146,10 @@ class CmdlineInterface(cmd.Cmd):
 				args.course_id, 
 				args.assignment_number
 			)
+			reports_api.generate_xls_grades_report_for_course(
+				args.course_id, 
+				args.assignment_number
+			)			
 		except SystemExit:
 			pass
 
