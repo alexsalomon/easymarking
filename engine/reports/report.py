@@ -23,7 +23,7 @@ class Report():
 		return course_dir
 
 	def get_assignment_path(self, course_id, assignment_number):
-		course_dir = get_course_path(course_id)
+		course_dir = self.get_course_path(course_id)
 		assignment_dir = course_dir+'A'+str(assignment_number)+'/'
 		return assignment_dir		
 

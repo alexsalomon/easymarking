@@ -22,10 +22,11 @@ class FeedbackReport(Report):
 		feedback_messages = handed_assignment.feedback_messages
 
 		for feedback in feedback_messages:
+			# string = (feedback.message).replace(u'\xa0', u' ')
 			report_file.write(
 				"-   " + feedback.message + " [-" + \
 				str(feedback.marks_to_deduct) + "]\n"
-			)	
+			)
 
 		if len(feedback_messages) == 0:
 			report_file.write(

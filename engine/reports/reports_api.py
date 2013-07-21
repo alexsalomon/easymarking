@@ -21,16 +21,16 @@ def generate_all_individual_student_fd_reports_for_assignment(
 		generate_individual_student_feedback_report(handed_assignment)
 
 def generate_individual_student_feedback_report(handed_assignment):
-	try:
-		report_manager = ReportManager()
-		report_obj = report_manager.get_report("individual_student_feedback")
-		report_obj.set_assignment(handed_assignment)
-		report_obj.generate()
-		print "Report for student '" + handed_assignment.student_id + \
-			"' was successfully generated."
-	except:
-		print "*** Report for student '" + handed_assignment.student_id + \
-			" could not be generated."
+	#try:
+	report_manager = ReportManager()
+	report_obj = report_manager.get_report("individual_student_feedback")
+	report_obj.set_assignment(handed_assignment)
+	report_obj.generate()
+	print "Report for student '" + handed_assignment.student_id + \
+		"' was successfully generated."
+	#except:
+	#	print "*** Report for student '" + handed_assignment.student_id + \
+	#		" could not be generated."
 
 def generate_overall_feedback_report_for_assignment(
 	course_id, 
