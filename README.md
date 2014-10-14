@@ -4,12 +4,13 @@ Easy Marking
 Introduction
 -----
 
-     EasyMarking is a command-line assignment marking application developed to speed up the process of marking student assignments by taking care of all the manual work for the marker and letting him/her concentrate in the assignments themselves. It automates directory navigation, report generation, and creation and delivery of student feedback and grade files to each individual student.
+EasyMarking is a command-line assignment marking application developed to speed up the process of marking student assignments by taking care of all the manual work for the marker and letting him/her concentrate in the assignments themselves. It automates directory navigation, report generation, and creation and delivery of student feedback and grade files to each individual student.
 
 Documentation and Management Tools
 -----
 
 Please refer to the link below for full documentation:
+
 Project Management Tool (Trello): https://trello.com/b/O7VON35S
 
 Running the application
