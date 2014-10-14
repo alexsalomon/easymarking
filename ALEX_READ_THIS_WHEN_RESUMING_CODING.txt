@@ -1,4 +1,0 @@
-You have a bunch of changes in the stash that I dont really know what they are
-
-so dont forget to: 
-	g stash pop 

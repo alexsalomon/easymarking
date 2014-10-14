@@ -86,12 +86,3 @@ class Student(database.Base):
             func.max(func.length(Student.student_id))
         ).scalar()
 
-    #     session = database.session
-    #     longest_length = session.execute(
-    #         'SELECT LENGTH(:field), COUNT(*) ' + \
-    #         'FROM :table GROUP BY LENGTH(field_to_query);',
-    #         field='student_id',
-    #         table='students'
-    #     )
-
-

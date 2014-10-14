@@ -10,8 +10,8 @@ class Parser():
 			return cls.__get_ccourse_parser()	
 		elif command == 'postasgmnt':
 			return cls.__get_postasgmnt_parser()
-		elif command == 'initmarking':
-			return cls.__get_initmarking_parser()				
+		elif command == 'init':
+			return cls.__get_init_parser()				
 		elif command == 'newfd':
 			return cls.__get_newfd_parser()					
 		elif command == 'fd':
@@ -25,7 +25,9 @@ class Parser():
 		elif command == 'gencgrep':
 			return cls.__get_gencgrep_parser()			
 		elif command == 'genallreps':
-			return cls.__get_genallreps_parser()			
+			return cls.__get_genallreps_parser()	
+		elif command == 'sendallemails':
+			return cls.__get_sendallemails_parser()						
 		elif command == 'nextdir':
 			return cls.__get_nextdir_parser()
 		elif command == 'prevdir':
@@ -91,31 +93,31 @@ class Parser():
 		return postasgmnt_parser	
 
 	@classmethod
-	def __get_initmarking_parser(cls):		
-		initmarking_parser = argparse.ArgumentParser(
+	def __get_init_parser(cls):		
+		init_parser = argparse.ArgumentParser(
 			add_help=False,
-			prog='initmarking'
+			prog='init'
 		)
-		initmarking_parser.add_argument(
+		init_parser.add_argument(
 			'course_id',
 			help="Course ID"
 		)
-		initmarking_parser.add_argument(
+		init_parser.add_argument(
 			'assignment_number',
 			help="Assignment number"
 		)		
-		initmarking_parser.add_argument(
+		init_parser.add_argument(
 			'maximum_marks',
 			help="Maximum marks"
 		)						
-		initmarking_parser.add_argument(
+		init_parser.add_argument(
 			'email_domain',
 			help="The domain name to which the student's email address resides.\n" \
 				"Example: if 'cc.umanitoba.ca' is inserted, the user's email will be " \
 				"'dirname@cc.umanitoba.ca', where dirname is the name of the subdirectory."
 		)		
 
-		return initmarking_parser				
+		return init_parser				
 
 	@classmethod
 	def __get_newfd_parser(cls):		
@@ -280,6 +282,30 @@ class Parser():
 		)
 
 		return genallreps_parser	
+
+	@classmethod
+	def __get_sendallemails_parser(cls):		
+		sendallemails_parser = argparse.ArgumentParser(
+			add_help=False,
+			prog='sendallemails'
+		)
+		sendallemails_parser.add_argument(
+			'-c',
+			dest='course_id',
+			action='store',
+			default=None,
+	        help="The course id"
+		)
+		sendallemails_parser.add_argument(
+			'-a',
+			dest='assignment_number',
+			action='store',
+			default=None,
+			type=int,			
+	        help="The assignment number"
+		)
+
+		return sendallemails_parser			
 
 	@classmethod
 	def __get_nextdir_parser(cls):		
