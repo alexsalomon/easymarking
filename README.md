@@ -13,6 +13,10 @@ Please refer to the link below for full documentation:
 
 Project Management Tool (Trello): https://trello.com/b/O7VON35S
 
+Instalation
+-----
+All the required modules are in `setup.py` - make sure they are installed before running the application.
+
 Running the application
 -----
 
